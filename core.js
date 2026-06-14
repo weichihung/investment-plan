@@ -144,10 +144,13 @@
       ]));
       const salary = age < 65 ? Number(settings.monthlySalary) * salaryMonths : 0;
       const openingInvestments = buckets.etf50 + buckets.leveraged + buckets.dividend0056 + buckets.dividend00919 + buckets.us;
-      const dividendIncome = year === START_YEAR && summary.dividends > 0 ? summary.dividends : openingInvestments * 0.025;
+      const dividendIncome = year === START_YEAR && summary.dividends > 0
+        ? summary.dividends * activeMonths / 12
+        : openingInvestments * 0.025;
       const livingExpense = monthlyBaseExpense * activeMonths;
-      const carLoan = year >= Number(settings.carYear) && year < Number(settings.carYear) + 4 ? annualCarLoan : 0;
-      const vehicleCost = year >= Number(settings.carYear) ? 75000 : 0;
+      const carLoanMonths = year === START_YEAR ? activeMonths : 12;
+      const carLoan = year >= Number(settings.carYear) && year < Number(settings.carYear) + 4 ? monthlyCarLoan * carLoanMonths : 0;
+      const vehicleCost = year >= Number(settings.carYear) ? 75000 * activeMonths / 12 : 0;
       let carPurchase = 0;
       let carFundingGap = 0;
 
