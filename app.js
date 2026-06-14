@@ -109,7 +109,7 @@
     }
     if (row.year === carStart) warnings.push(`${row.year} 年購車頭期款 ${money(row.carPurchase)}，優先出售 00919 並保留現金 80 萬。`);
     if (row.year === carStart && row.carFundingGap > 0) warnings.push(`購車資金仍缺 ${money(row.carFundingGap)}；需延後購車或調高貸款成數。`);
-    if (row.year === 2026) warnings.push("2026 年按 6 個月薪資與 6 個月投資計算。 ");
+    if (row.year === 2026) warnings.push(`2026 年收入、支出與投資僅計入目前至年底剩餘 ${row.activeMonths} 個月；預估年股利亦按 ${row.activeMonths}/12 比例計入。`);
     $("#alerts").innerHTML = warnings.map((text, index) => `<div class="alert ${index === 0 && lowCash ? "alert-warn" : ""}"><span>${index + 1}</span><p>${text}</p></div>`).join("");
   }
 
