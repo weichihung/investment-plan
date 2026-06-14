@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="zh-Hant">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>遠見資產｜行動版</title><link rel="stylesheet" href="mobile.css?v=4"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>遠見資產｜行動版</title><link rel="stylesheet" href="mobile.css?v=5"></head>
 <body>
   <main id="top">
     <header><div><p>滾動式投資規劃</p><h1>我的資產</h1></div><span class="avatar">遠</span></header>
@@ -15,6 +15,6 @@
     <section class="sheet" id="settings"><div class="section-title"><div><small>情境試算</small><h2>調整規劃</h2></div><button id="resetSettings">重設</button></div><form id="settingsForm"><label>月薪<input id="monthlySalary" name="monthlySalary" type="number" step="1000"></label><label>年化報酬率 %<input id="annualReturn" name="annualReturn" type="number" step=".1"></label><label>計算年數<input id="years" name="years" type="number"></label><label>購車價格<input id="carPrice" name="carPrice" type="number" step="10000"></label><label>購車年度<input id="carYear" name="carYear" type="number"></label><label>台幣存款<input id="twdDeposit" name="twdDeposit" type="number" step="10000"></label><label>外幣存款（折合台幣）<input id="foreignDepositTwd" name="foreignDepositTwd" type="number" step="10000"></label></form><p class="note">存款變更後立即更新現金與全部試算。車貸按年利率 2.5% 與 48 期本息平均攤還。</p></section>
   </main>
   <nav class="bottom-nav"><button data-scroll="#top"><b>⌂</b>總覽</button><button data-scroll="#annual"><b>▤</b>現金流</button><button class="nav-main" id="mobileUpdate">↻</button><button data-scroll="#portfolio"><b>◫</b>持股</button><button data-scroll="#settings"><b>⚙</b>設定</button></nav>
-  <script src="core.js?v=4"></script><script src="app.js?v=4"></script><script>document.getElementById('mobileUpdate').addEventListener('click',()=>document.getElementById('updateQuotes').click())</script>
+  <script src="core.js?v=5"></script><script src="app.js?v=5"></script><script>document.getElementById('mobileUpdate').addEventListener('click',()=>document.getElementById('updateQuotes').click())</script>
 </body>
 </html>
