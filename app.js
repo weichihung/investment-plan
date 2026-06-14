@@ -2,6 +2,7 @@
   "use strict";
   const core = window.InvestmentCore;
   let settings = core.loadSettings();
+  let holdingDraft = JSON.parse(JSON.stringify(settings.holdingSettings || core.defaults.holdingSettings));
   let selectedYear = 2026;
 
   const $ = (selector) => document.querySelector(selector);
@@ -34,23 +35,27 @@
     $("#portfolioRows").innerHTML = portfolio.map((item) => `
       <tr>
         <td><strong>${item.symbol}</strong><small>${item.name}</small></td>
-        <td>${item.market === "US" ? core.formatUsd(item.cost) : money(item.cost)}</td>
+        <td><input class="holding-input" data-holding-symbol="${item.symbol}" data-holding-field="cost" type="number" min="0" step="0.0001" value="${holdingDraft[item.symbol].cost}"></td>
         <td>${item.market === "US" ? core.formatUsd(item.price) : money(item.price)}</td>
-        <td>${core.formatNumber(item.units, 5)}</td>
+        <td><input class="holding-input" data-holding-symbol="${item.symbol}" data-holding-field="units" type="number" min="0" step="0.00001" value="${holdingDraft[item.symbol].units}"></td>
         <td>${money(item.marketValueTwd)}</td>
         <td class="${item.profit >= 0 ? "positive" : "negative"}">${money(item.profit)}</td>
         <td>${money(item.dividendTwd)}</td>
       </tr>`).join("");
     $("#holdingYearSelect").innerHTML = forecast.map((item) => `<option value="${item.year}" ${item.year === selectedYear ? "selected" : ""}>${item.year} 年 · ${item.age} 歲</option>`).join("");
     let holdingStockTotal = 0;
-    $("#holdingRows").innerHTML = core.holdings.map((item) => {
+    const holdingValues = core.holdings.map((item) => {
       const unitValue = row.units[item.symbol];
       const display = item.market === "TW" ? `${core.formatNumber(unitValue / 1000, 3)} 張` : `${core.formatNumber(unitValue, 3)} 股`;
       const latestPrice = Number(settings.prices[item.symbol]);
       const marketValueTwd = unitValue * latestPrice * (item.market === "US" ? Number(settings.fxRate) : 1);
       holdingStockTotal += marketValueTwd;
+      return { item, display, latestPrice, marketValueTwd };
+    });
+    $("#holdingRows").innerHTML = holdingValues.map(({ item, display, latestPrice, marketValueTwd }) => {
       const priceDisplay = item.market === "US" ? core.formatUsd(latestPrice) : money(latestPrice);
-      return `<tr><td><strong>${item.symbol}</strong><small>${item.name}</small></td><td>${display}</td><td>${priceDisplay}</td><td>${money(marketValueTwd)}</td></tr>`;
+      const weight = holdingStockTotal > 0 ? marketValueTwd / holdingStockTotal * 100 : 0;
+      return `<tr><td><strong>${item.symbol}</strong><small>${item.name}</small></td><td>${display}</td><td>${priceDisplay}</td><td>${money(marketValueTwd)}</td><td><strong>${weight.toFixed(1)}%</strong></td></tr>`;
     }).join("");
     $("#holdingStockTotal").textContent = money(holdingStockTotal);
 
@@ -60,6 +65,7 @@
     $("#yearInvestment").textContent = money(row.plannedInvestment);
     $("#yearEnding").textContent = money(row.total);
     $("#yearCash").textContent = money(row.cash);
+    $("#cashflowPeriod").textContent = row.year === 2026 ? `資料基準：2026 年 ${row.planMonth} 月｜剩餘 ${row.activeMonths} 個月` : `${row.year} 年完整年度`;
     $("#yearDetails").innerHTML = [
       ["薪資收入", row.salary], ["股利收入", row.dividendIncome], ["孝親費", -row.family], ["固定支出", -row.fixed],
       ["特別預算", -row.leisure], ["車貸支出", -row.carLoan], ["車輛持有成本", -row.vehicleCost], ["購車頭期款", -row.carPurchase]
@@ -88,7 +94,7 @@
     const warnings = [];
     const row = forecast.find((item) => item.year === selectedYear) || forecast[0];
     const monthlyInvestments = Object.entries(row.investments).map(([symbol, annual]) => {
-      const monthlyTwd = annual / row.investmentMonths;
+      const monthlyTwd = annual / Math.max(1, row.investmentMonths);
       const display = ["VOO", "NVDA"].includes(symbol)
         ? `${money(monthlyTwd)}（約 ${core.formatUsd(monthlyTwd / Number(settings.fxRate))}）`
         : money(monthlyTwd);
@@ -116,8 +122,21 @@
       core.saveSettings(settings);
       render();
     });
+    $("#portfolioRows").addEventListener("input", (event) => {
+      const input = event.target.closest("[data-holding-symbol]");
+      if (!input) return;
+      holdingDraft[input.dataset.holdingSymbol][input.dataset.holdingField] = Number(input.value);
+      $("#holdingSaveStatus").textContent = "尚未保存";
+    });
+    $("#saveHoldings").addEventListener("click", () => {
+      settings.holdingSettings = JSON.parse(JSON.stringify(holdingDraft));
+      core.saveSettings(settings);
+      $("#holdingSaveStatus").textContent = "已保存，後續更新將沿用";
+      render();
+    });
     $("#resetSettings").addEventListener("click", () => {
-      settings = { ...core.defaults, prices: { ...core.defaults.prices }, annualDividends: { ...core.defaults.annualDividends } };
+      settings = { ...core.defaults, prices: { ...core.defaults.prices }, annualDividends: { ...core.defaults.annualDividends }, holdingSettings: JSON.parse(JSON.stringify(core.defaults.holdingSettings)) };
+      holdingDraft = JSON.parse(JSON.stringify(settings.holdingSettings));
       core.saveSettings(settings);
       render();
     });
