@@ -45,7 +45,7 @@
 
     <section class="two-col">
       <article class="panel annual-panel" id="annual">
-        <div class="section-head"><div><p class="eyebrow">YEARLY CASH FLOW</p><h2>年度現金流</h2></div><select id="yearSelect" aria-label="選擇年度"></select></div>
+        <div class="section-head"><div><p class="eyebrow">YEARLY CASH FLOW</p><h2>年度現金流</h2><small class="muted" id="cashflowPeriod">—</small></div><select id="yearSelect" aria-label="選擇年度"></select></div>
         <div class="annual-kpis"><div><span>收入</span><strong id="yearIncome">—</strong></div><div><span>支出</span><strong id="yearExpense">—</strong></div><div><span>投入</span><strong id="yearInvestment">—</strong></div><div><span>期末銀行存款</span><strong id="yearCash">—</strong></div><div class="accent"><span>期末資產</span><strong id="yearEnding">—</strong></div></div>
         <div class="detail-list" id="yearDetails"></div>
       </article>
@@ -53,7 +53,7 @@
     </section>
 
     <section class="panel" id="portfolio">
-      <div class="section-head"><div><p class="eyebrow">CURRENT HOLDINGS</p><h2>目前持有資產</h2></div><span class="muted">市值統一換算為新台幣</span></div>
+      <div class="section-head"><div><p class="eyebrow">CURRENT HOLDINGS</p><h2>目前持有資產</h2></div><div class="holding-save"><span class="muted" id="holdingSaveStatus">可修改單位成本與持有數量</span><button class="primary" id="saveHoldings">保存持股設定</button></div></div>
       <div class="table-wrap"><table><thead><tr><th>標的</th><th>單位成本</th><th>最新收盤價</th><th>持有數量</th><th>目前市值</th><th>投資損益</th><th>年化股利</th></tr></thead><tbody id="portfolioRows"></tbody></table></div>
     </section>
 
@@ -61,7 +61,7 @@
       <div class="section-head"><div><p class="eyebrow">PROJECTED HOLDINGS</p><h2>各年度預估持股</h2></div><select id="holdingYearSelect" aria-label="選擇持股年度"></select></div>
       <div class="holding-summary"><span>依目前最新收盤價計算</span><strong>當年度股票總值 <b id="holdingStockTotal">—</b></strong></div>
       <p class="muted">台股顯示張數，美股顯示股數；美股市值依目前匯率換算為新台幣。</p>
-      <div class="table-wrap"><table class="holding-table"><thead><tr><th>標的</th><th>預估持有數量</th><th>最新收盤價</th><th>依最新價計算市值</th></tr></thead><tbody id="holdingRows"></tbody></table></div>
+      <div class="table-wrap"><table class="holding-table"><thead><tr><th>標的</th><th>預估持有數量</th><th>最新收盤價</th><th>依最新價計算市值</th><th>持股占比</th></tr></thead><tbody id="holdingRows"></tbody></table></div>
     </section>
 
     <section class="panel settings-panel" id="settings">
