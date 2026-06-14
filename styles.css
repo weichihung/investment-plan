@@ -7,3 +7,4 @@
 .chart-value{top:auto!important}
 .holding-table{min-width:520px}.holding-table select,.section-head select{border:1px solid var(--line);border-radius:9px;padding:9px;background:white;color:var(--ink)}
 .holding-summary{display:flex;justify-content:space-between;align-items:center;padding:15px 18px;margin-bottom:12px;border-radius:12px;background:#e8f3ee}.holding-summary span{font-size:11px;color:var(--muted)}.holding-summary strong{font-size:13px}.holding-summary b{margin-left:10px;font-size:19px;color:var(--green)}
+.holding-save{display:flex;align-items:center;gap:12px}.holding-input{width:115px;border:1px solid var(--line);border-radius:8px;padding:9px;font:inherit;color:var(--ink);background:#fbfcfb}.holding-input:focus{outline:2px solid #bfe6d5;border-color:var(--green)}
