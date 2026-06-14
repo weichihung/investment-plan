@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>遠見資產｜投資規劃系統</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="#top"><span>遠見</span><strong>資產規劃</strong></a>
+    <nav>
+      <button class="active" data-scroll="#top">總覽</button>
+      <button data-scroll="#portfolio">投資組合</button>
+      <button data-scroll="#holdingsForecast">年度持股</button>
+      <button data-scroll="#forecast">資產預估</button>
+      <button data-scroll="#annual">年度現金流</button>
+      <button data-scroll="#settings">規劃參數</button>
+    </nav>
+    <div class="sidebar-note"><small>預設規劃期間</small><strong>2026 — 2036</strong><span>10 年試算</span></div>
+  </aside>
+
+  <main id="top">
+    <header class="topbar">
+      <div><p class="eyebrow">PERSONAL WEALTH CONSOLE</p><h1>早安，今天也讓資產往前走。</h1></div>
+      <div class="top-actions"><span class="badge" id="fxBadge">USD/TWD 32.50</span><button class="primary" id="updateQuotes">更新報價</button></div>
+    </header>
+
+    <section class="hero-grid">
+      <article class="hero-card dark">
+        <div><p>目前總資產</p><h2 id="totalAsset">—</h2><span id="totalAssetDelta">—</span></div>
+        <div class="orb"></div>
+        <footer><span>資料狀態</span><strong id="quoteMeta">—</strong></footer>
+      </article>
+      <article class="metric-card"><span class="metric-icon cash">存</span><p>現金存款</p><h3 id="cashAsset">—</h3><small>安全線 70 萬</small></article>
+      <article class="metric-card"><span class="metric-icon stock">股</span><p>股票市值</p><h3 id="stockAsset">—</h3><small>台股＋美股</small></article>
+      <article class="metric-card"><span class="metric-icon dividend">息</span><p>年度預估股利</p><h3 id="dividendAsset">—</h3><small>依已公告配息年化</small></article>
+    </section>
+
+    <section class="panel forecast-panel" id="forecast">
+      <div class="section-head"><div><p class="eyebrow">LONG-TERM OUTLOOK</p><h2>資產成長軌跡</h2></div><div class="forecast-stats"><span>起始<strong id="forecastStart">—</strong></span><span>65 歲<strong id="forecastEnd">—</strong></span><span>總成長<strong id="forecastGrowth">—</strong></span></div></div>
+      <div class="chart-scroll"><div class="chart" id="forecastChart"></div></div>
+      <div class="chart-legend"><i></i> 年底預估總資產 <span>假設年化報酬率固定，未計稅費及通膨</span></div>
+    </section>
+
+    <section class="two-col">
+      <article class="panel annual-panel" id="annual">
+        <div class="section-head"><div><p class="eyebrow">YEARLY CASH FLOW</p><h2>年度現金流</h2></div><select id="yearSelect" aria-label="選擇年度"></select></div>
+        <div class="annual-kpis"><div><span>收入</span><strong id="yearIncome">—</strong></div><div><span>支出</span><strong id="yearExpense">—</strong></div><div><span>投入</span><strong id="yearInvestment">—</strong></div><div><span>期末銀行存款</span><strong id="yearCash">—</strong></div><div class="accent"><span>期末資產</span><strong id="yearEnding">—</strong></div></div>
+        <div class="detail-list" id="yearDetails"></div>
+      </article>
+      <article class="panel alert-panel"><div class="section-head"><div><p class="eyebrow">PLANNING NOTES</p><h2>規劃提醒</h2></div></div><div id="monthlyPlan"></div><div id="alerts"></div></article>
+    </section>
+
+    <section class="panel" id="portfolio">
+      <div class="section-head"><div><p class="eyebrow">CURRENT HOLDINGS</p><h2>目前持有資產</h2></div><span class="muted">市值統一換算為新台幣</span></div>
+      <div class="table-wrap"><table><thead><tr><th>標的</th><th>單位成本</th><th>最新收盤價</th><th>持有數量</th><th>目前市值</th><th>投資損益</th><th>年化股利</th></tr></thead><tbody id="portfolioRows"></tbody></table></div>
+    </section>
+
+    <section class="panel" id="holdingsForecast">
+      <div class="section-head"><div><p class="eyebrow">PROJECTED HOLDINGS</p><h2>各年度預估持股</h2></div><select id="holdingYearSelect" aria-label="選擇持股年度"></select></div>
+      <div class="holding-summary"><span>依目前最新收盤價計算</span><strong>當年度股票總值 <b id="holdingStockTotal">—</b></strong></div>
+      <p class="muted">台股顯示張數，美股顯示股數；美股市值依目前匯率換算為新台幣。</p>
+      <div class="table-wrap"><table class="holding-table"><thead><tr><th>標的</th><th>預估持有數量</th><th>最新收盤價</th><th>依最新價計算市值</th></tr></thead><tbody id="holdingRows"></tbody></table></div>
+    </section>
+
+    <section class="panel settings-panel" id="settings">
+      <div class="section-head"><div><p class="eyebrow">SCENARIO CONTROL</p><h2>調整你的規劃</h2></div><button class="text-button" id="resetSettings">還原預設</button></div>
+      <form id="settingsForm" class="settings-grid">
+        <label>月薪（元）<input id="monthlySalary" name="monthlySalary" type="number" min="0" step="1000"></label>
+        <label>年化報酬率（%）<input id="annualReturn" name="annualReturn" type="number" min="0" max="30" step="0.1"></label>
+        <label>計算年數<input id="years" name="years" type="number" min="1" max="50"></label>
+        <label>購車價格（元）<input id="carPrice" name="carPrice" type="number" min="0" step="10000"></label>
+        <label>購車年度<input id="carYear" name="carYear" type="number" min="2026" max="2050"></label>
+        <label>台幣存款（元）<input id="twdDeposit" name="twdDeposit" type="number" min="0" step="10000"></label>
+        <label>外幣存款（折合台幣）<input id="foreignDepositTwd" name="foreignDepositTwd" type="number" min="0" step="10000"></label>
+      </form>
+      <p class="assumption">計算基準：2026 年 6 月起；2026 年按 6 個月薪資與投資。2028 年起保留目標現金後投入，61 歲改採防守型配置。</p>
+    </section>
+  </main>
+  <script src="core.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
