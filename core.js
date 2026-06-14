@@ -2,7 +2,7 @@
   "use strict";
 
   const STORAGE_KEY = "investment-plan-settings-v1";
-  const DATA_VERSION = 3;
+  const DATA_VERSION = 4;
   const START_YEAR = 2026;
   const START_MONTH = 6;
   const BASE_AGE = 43;
@@ -29,7 +29,8 @@
     updatedAt: "2026-06-12T16:00:00+08:00",
     quoteStatus: "2026/06/12 最新收盤資料",
     prices: { "0050": 101.95, "0056": 50.60, "00919": 30.19, "00631L": 34.83, VOO: 681.95, NVDA: 205.19 },
-    annualDividends: { "0050": 2, "0056": 3.732, "00919": 3.12, "00631L": 0, VOO: 7.488, NVDA: 0.52 }
+    annualDividends: { "0050": 2, "0056": 3.732, "00919": 3.12, "00631L": 0, VOO: 7.488, NVDA: 0.52 },
+    holdingSettings: Object.fromEntries(holdings.map((item) => [item.symbol, { units: item.units, cost: item.cost }]))
   };
 
   function loadSettings() {
@@ -37,7 +38,8 @@
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
       if (Number(saved.dataVersion || 0) < DATA_VERSION) {
         return { ...defaults, ...saved, dataVersion: DATA_VERSION, years: defaults.years, fxRate: defaults.fxRate, updatedAt: defaults.updatedAt,
-          quoteStatus: defaults.quoteStatus, prices: { ...defaults.prices }, annualDividends: { ...defaults.annualDividends } };
+          quoteStatus: defaults.quoteStatus, prices: { ...defaults.prices }, annualDividends: { ...defaults.annualDividends },
+          holdingSettings: saved.holdingSettings || JSON.parse(JSON.stringify(defaults.holdingSettings)) };
       }
       return { ...defaults, ...saved };
     } catch (_error) {
@@ -64,13 +66,16 @@
   function portfolio(settings) {
     const fx = Number(settings.fxRate) || defaults.fxRate;
     return holdings.map((item) => {
+      const savedHolding = (settings.holdingSettings && settings.holdingSettings[item.symbol]) || {};
+      const units = Number(savedHolding.units ?? item.units);
+      const cost = Number(savedHolding.cost ?? item.cost);
       const price = Number(settings.prices[item.symbol] || item.cost);
-      const marketValueNative = item.units * price;
+      const marketValueNative = units * price;
       const marketValueTwd = item.market === "US" ? marketValueNative * fx : marketValueNative;
-      const costTwd = item.units * item.cost * (item.market === "US" ? fx : 1);
-      const dividendNative = Number(settings.annualDividends[item.symbol] || 0) * item.units;
+      const costTwd = units * cost * (item.market === "US" ? fx : 1);
+      const dividendNative = Number(settings.annualDividends[item.symbol] || 0) * units;
       const dividendTwd = dividendNative * (item.market === "US" ? fx : 1);
-      return { ...item, price, marketValueNative, marketValueTwd, costTwd, profit: marketValueTwd - costTwd, dividendTwd };
+      return { ...item, units, cost, price, marketValueNative, marketValueTwd, costTwd, profit: marketValueTwd - costTwd, dividendTwd };
     });
   }
 
@@ -128,10 +133,12 @@
     ]));
     const rows = [];
 
+    const now = new Date();
+    const currentPlanMonth = now.getFullYear() > START_YEAR ? 12 : Math.max(START_MONTH, now.getMonth() + 1);
     for (let year = START_YEAR; year <= finalYear; year += 1) {
       const age = BASE_AGE + (year - START_YEAR);
-      const salaryMonths = year === 2026 ? 6 : 14;
-      const activeMonths = year === 2026 ? 6 : 12;
+      const activeMonths = year === START_YEAR ? Math.max(0, 12 - currentPlanMonth) : 12;
+      const salaryMonths = year === START_YEAR ? activeMonths : 14;
       const projectedPrices = Object.fromEntries(Object.entries(basePricesTwd).map(([symbol, price]) => [
         symbol, price * Math.pow(1 + rate, year - START_YEAR + 1)
       ]));
@@ -233,7 +240,8 @@
       const twStocks = buckets.etf50 + buckets.leveraged + buckets.dividend0056 + buckets.dividend00919;
       const total = buckets.cash + twStocks + buckets.us;
       rows.push({
-        year, age, salary, dividendIncome, income: salary + dividendIncome,
+        year, age, planMonth: year === START_YEAR ? currentPlanMonth : 1, salaryMonths, activeMonths,
+        salary, dividendIncome, income: salary + dividendIncome,
         family: 20000 * activeMonths, fixed: 22000 * activeMonths, leisure: 10000 * activeMonths,
         carLoan, vehicleCost, expense: livingExpense + carLoan + vehicleCost,
         carPurchase, carFundingGap, plannedInvestment, investments, investmentMonths: activeMonths,
