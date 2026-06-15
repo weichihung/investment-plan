@@ -2,7 +2,7 @@
   "use strict";
 
   const STORAGE_KEY = "investment-plan-settings-v1";
-  const DATA_VERSION = 4;
+  const DATA_VERSION = 5;
   const START_YEAR = 2026;
   const START_MONTH = 6;
   const BASE_AGE = 43;
@@ -25,10 +25,10 @@
     carYear: 2029,
     twdDeposit: 1500000,
     foreignDepositTwd: 200000,
-    fxRate: 31.61,
-    updatedAt: "2026-06-12T16:00:00+08:00",
-    quoteStatus: "2026/06/12 最新收盤資料",
-    prices: { "0050": 101.95, "0056": 50.60, "00919": 30.19, "00631L": 34.83, VOO: 681.95, NVDA: 205.19 },
+    fxRate: 31.517,
+    updatedAt: "2026-06-15T16:00:00+08:00",
+    quoteStatus: "台股與匯率 2026/06/15、美股 2026/06/12 最新收盤資料",
+    prices: { "0050": 105.25, "0056": 51.50, "00919": 30.69, "00631L": 37.07, VOO: 681.95, NVDA: 205.19 },
     annualDividends: { "0050": 2, "0056": 3.732, "00919": 3.12, "00631L": 0, VOO: 7.488, NVDA: 0.52 },
     holdingSettings: Object.fromEntries(holdings.map((item) => [item.symbol, { units: item.units, cost: item.cost }]))
   };
@@ -40,6 +40,12 @@
         return { ...defaults, ...saved, dataVersion: DATA_VERSION, years: defaults.years, fxRate: defaults.fxRate, updatedAt: defaults.updatedAt,
           quoteStatus: defaults.quoteStatus, prices: { ...defaults.prices }, annualDividends: { ...defaults.annualDividends },
           holdingSettings: saved.holdingSettings || JSON.parse(JSON.stringify(defaults.holdingSettings)) };
+      }
+      const savedQuoteTime = Date.parse(saved.updatedAt || "");
+      const defaultQuoteTime = Date.parse(defaults.updatedAt);
+      if (!Number.isFinite(savedQuoteTime) || savedQuoteTime < defaultQuoteTime) {
+        return { ...defaults, ...saved, fxRate: defaults.fxRate, updatedAt: defaults.updatedAt,
+          quoteStatus: defaults.quoteStatus, prices: { ...defaults.prices }, annualDividends: { ...defaults.annualDividends } };
       }
       return { ...defaults, ...saved };
     } catch (_error) {
