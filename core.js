@@ -2,18 +2,18 @@
   "use strict";
 
   const STORAGE_KEY = "investment-plan-settings-v1";
-  const DATA_VERSION = 5;
+  const DATA_VERSION = 6;
   const START_YEAR = 2026;
   const START_MONTH = 6;
   const BASE_AGE = 43;
 
   const holdings = [
-    { symbol: "0050", name: "元大台灣50", market: "TW", units: 38270, cost: 38.67, price: 38.67, group: "0050", dividendFrequency: 2 },
+    { symbol: "0050", name: "元大台灣50", market: "TW", units: 38439, cost: 38.96, price: 38.96, group: "0050", dividendFrequency: 2 },
     { symbol: "0056", name: "元大高股息", market: "TW", units: 32000, cost: 31.03, price: 31.03, group: "DIVIDEND", dividendFrequency: 4 },
     { symbol: "00919", name: "群益台灣精選高息", market: "TW", units: 51000, cost: 23.48, price: 23.48, group: "DIVIDEND", dividendFrequency: 4 },
     { symbol: "00631L", name: "元大台灣50正2", market: "TW", units: 800, cost: 36.04, price: 36.04, group: "LEVERAGED", dividendFrequency: 0 },
-    { symbol: "VOO", name: "Vanguard S&P 500 ETF", market: "US", units: 17.14798, cost: 572.26, price: 572.26, group: "US", dividendFrequency: 4 },
-    { symbol: "NVDA", name: "NVIDIA", market: "US", units: 109.26, cost: 148.31, price: 148.31, group: "US", dividendFrequency: 4 }
+    { symbol: "VOO", name: "Vanguard S&P 500 ETF", market: "US", units: 17.2926, cost: 573.263, price: 573.263, group: "US", dividendFrequency: 4 },
+    { symbol: "NVDA", name: "NVIDIA", market: "US", units: 110.21241, cost: 148.842, price: 148.842, group: "US", dividendFrequency: 4 }
   ];
 
   const defaults = {
@@ -23,13 +23,13 @@
     years: 10,
     carPrice: 1900000,
     carYear: 2029,
-    twdDeposit: 1500000,
-    foreignDepositTwd: 200000,
-    fxRate: 31.517,
-    updatedAt: "2026-06-15T16:00:00+08:00",
-    quoteStatus: "台股與匯率 2026/06/15、美股 2026/06/12 最新收盤資料",
-    prices: { "0050": 105.25, "0056": 51.50, "00919": 30.69, "00631L": 37.07, VOO: 681.95, NVDA: 205.19 },
-    annualDividends: { "0050": 2, "0056": 3.732, "00919": 3.12, "00631L": 0, VOO: 7.488, NVDA: 0.52 },
+    twdDeposit: 1483570,
+    foreignDepositTwd: 191809,
+    fxRate: 31.629,
+    updatedAt: "2026-06-19T16:00:00+08:00",
+    quoteStatus: "台股 2026/06/17、美股 2026/06/18、匯率 2026/06/19 最新資料",
+    prices: { "0050": 106.00, "0056": 51.95, "00919": 30.35, "00631L": 37.51, VOO: 688.11, NVDA: 210.69 },
+    annualDividends: { "0050": 2, "0056": 3.732, "00919": 3.56, "00631L": 0, VOO: 7.488, NVDA: 0.52 },
     holdingSettings: Object.fromEntries(holdings.map((item) => [item.symbol, { units: item.units, cost: item.cost }]))
   };
 
@@ -37,9 +37,13 @@
     try {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
       if (Number(saved.dataVersion || 0) < DATA_VERSION) {
+        const holdingSettings = { ...JSON.parse(JSON.stringify(defaults.holdingSettings)), ...(saved.holdingSettings || {}) };
+        ["0050", "VOO", "NVDA"].forEach((symbol) => {
+          holdingSettings[symbol] = { ...defaults.holdingSettings[symbol] };
+        });
         return { ...defaults, ...saved, dataVersion: DATA_VERSION, years: defaults.years, fxRate: defaults.fxRate, updatedAt: defaults.updatedAt,
           quoteStatus: defaults.quoteStatus, prices: { ...defaults.prices }, annualDividends: { ...defaults.annualDividends },
-          holdingSettings: saved.holdingSettings || JSON.parse(JSON.stringify(defaults.holdingSettings)) };
+          twdDeposit: defaults.twdDeposit, foreignDepositTwd: defaults.foreignDepositTwd, holdingSettings };
       }
       const savedQuoteTime = Date.parse(saved.updatedAt || "");
       const defaultQuoteTime = Date.parse(defaults.updatedAt);
