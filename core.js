@@ -2,7 +2,7 @@
   "use strict";
 
   const STORAGE_KEY = "investment-plan-settings-v1";
-  const DATA_VERSION = 7;
+  const DATA_VERSION = 8;
   const START_YEAR = 2026;
   const START_MONTH = 6;
   const BASE_AGE = 43;
@@ -25,11 +25,11 @@
     carYear: 2029,
     twdDeposit: 1495175,
     foreignDepositTwd: 185499,
-    fxRate: 31.923,
-    updatedAt: "2026-07-04T09:00:00+08:00",
-    quoteStatus: "台股 2026/07/02、美股 2026/07/02、匯率 2026/07/03 最新資料",
-    prices: { "0050": 108.80, "0056": 52.60, "00919": 29.20, "00631L": 38.88, VOO: 684.84, NVDA: 194.83 },
-    annualDividends: { "0050": 2, "0056": 3.732, "00919": 3.56, "00631L": 0, VOO: 7.668, NVDA: 0.52 },
+    fxRate: 32.084,
+    updatedAt: "2026-07-10T16:00:00+08:00",
+    quoteStatus: "台股 2026/07/08、美股 2026/07/09、匯率 2026/07/10 最新資料",
+    prices: { "0050": 106.05, "0056": 52.35, "00919": 29.94, "00631L": 37.14, VOO: 690.69, NVDA: 202.78 },
+    annualDividends: { "0050": 2, "0056": 3.732, "00919": 3.56, "00631L": 0, VOO: 7.668, NVDA: 0.04 },
     holdingSettings: Object.fromEntries(holdings.map((item) => [item.symbol, { units: item.units, cost: item.cost }]))
   };
 
