@@ -1,2 +1,0 @@
-Codex GitHub connector write test
-Created at 2026-07-10 for permission verification.
