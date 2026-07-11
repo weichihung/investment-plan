@@ -2,18 +2,18 @@
   "use strict";
 
   const STORAGE_KEY = "investment-plan-settings-v1";
-  const DATA_VERSION = 8;
+  const DATA_VERSION = 9;
   const START_YEAR = 2026;
   const START_MONTH = 6;
   const BASE_AGE = 43;
 
   const holdings = [
-    { symbol: "0050", name: "元大台灣50", market: "TW", units: 38762, cost: 39.54, price: 39.54, group: "0050", dividendFrequency: 2 },
+    { symbol: "0050", name: "元大台灣50", market: "TW", units: 38927, cost: 39.82, price: 39.82, group: "0050", dividendFrequency: 2 },
     { symbol: "0056", name: "元大高股息", market: "TW", units: 32000, cost: 31.03, price: 31.03, group: "DIVIDEND", dividendFrequency: 4 },
     { symbol: "00919", name: "群益台灣精選高息", market: "TW", units: 51000, cost: 23.48, price: 23.48, group: "DIVIDEND", dividendFrequency: 4 },
     { symbol: "00631L", name: "元大台灣50正2", market: "TW", units: 1000, cost: 35.93, price: 35.93, group: "LEVERAGED", dividendFrequency: 0 },
     { symbol: "VOO", name: "Vanguard S&P 500 ETF", market: "US", units: 17.4394, cost: 574.177, price: 574.177, group: "US", dividendFrequency: 4 },
-    { symbol: "NVDA", name: "NVIDIA", market: "US", units: 111.21221, cost: 149.303, price: 149.303, group: "US", dividendFrequency: 4 }
+    { symbol: "NVDA", name: "NVIDIA", market: "US", units: 112.2406, cost: 149.718, price: 149.718, group: "US", dividendFrequency: 4 }
   ];
 
   const defaults = {
@@ -23,13 +23,13 @@
     years: 10,
     carPrice: 1900000,
     carYear: 2029,
-    twdDeposit: 1495175,
-    foreignDepositTwd: 185499,
-    fxRate: 32.084,
-    updatedAt: "2026-07-10T16:00:00+08:00",
-    quoteStatus: "台股 2026/07/08、美股 2026/07/09、匯率 2026/07/10 最新資料",
-    prices: { "0050": 106.05, "0056": 52.35, "00919": 29.94, "00631L": 37.14, VOO: 690.69, NVDA: 202.78 },
-    annualDividends: { "0050": 2, "0056": 3.732, "00919": 3.56, "00631L": 0, VOO: 7.668, NVDA: 0.04 },
+    twdDeposit: 1460289,
+    foreignDepositTwd: 180757,
+    fxRate: 32.099,
+    updatedAt: "2026-07-12T09:00:00+08:00",
+    quoteStatus: "台股 2026/07/10、美股 2026/07/10、匯率 2026/07/10 最新資料",
+    prices: { "0050": 105.80, "0056": 52.65, "00919": 29.97, "00631L": 36.78, VOO: 693.86, NVDA: 210.96 },
+    annualDividends: { "0050": 2, "0056": 3.732, "00919": 3.56, "00631L": 0, VOO: 7.668, NVDA: 0.52 },
     holdingSettings: Object.fromEntries(holdings.map((item) => [item.symbol, { units: item.units, cost: item.cost }]))
   };
 
