@@ -1,19 +1,19 @@
-(function (global) {
+﻿(function (global) {
   "use strict";
 
   const STORAGE_KEY = "investment-plan-settings-v1";
-  const DATA_VERSION = 9;
+  const DATA_VERSION = 10;
   const START_YEAR = 2026;
   const START_MONTH = 6;
   const BASE_AGE = 43;
 
   const holdings = [
-    { symbol: "0050", name: "元大台灣50", market: "TW", units: 38927, cost: 39.82, price: 39.82, group: "0050", dividendFrequency: 2 },
+    { symbol: "0050", name: "元大台灣50", market: "TW", units: 39739, cost: 41.11, price: 41.11, group: "0050", dividendFrequency: 2 },
     { symbol: "0056", name: "元大高股息", market: "TW", units: 32000, cost: 31.03, price: 31.03, group: "DIVIDEND", dividendFrequency: 4 },
     { symbol: "00919", name: "群益台灣精選高息", market: "TW", units: 51000, cost: 23.48, price: 23.48, group: "DIVIDEND", dividendFrequency: 4 },
-    { symbol: "00631L", name: "元大台灣50正2", market: "TW", units: 1000, cost: 35.93, price: 35.93, group: "LEVERAGED", dividendFrequency: 0 },
-    { symbol: "VOO", name: "Vanguard S&P 500 ETF", market: "US", units: 17.4394, cost: 574.177, price: 574.177, group: "US", dividendFrequency: 4 },
-    { symbol: "NVDA", name: "NVIDIA", market: "US", units: 112.2406, cost: 149.718, price: 149.718, group: "US", dividendFrequency: 4 }
+    { symbol: "00631L", name: "元大台灣50正2", market: "TW", units: 2000, cost: 35.04, price: 35.04, group: "LEVERAGED", dividendFrequency: 0 },
+    { symbol: "VOO", name: "Vanguard S&P 500 ETF", market: "US", units: 17.58363, cost: 575.160, price: 575.160, group: "US", dividendFrequency: 4 },
+    { symbol: "NVDA", name: "NVIDIA", market: "US", units: 113.184, cost: 150.238, price: 150.238, group: "US", dividendFrequency: 4 }
   ];
 
   const defaults = {
@@ -23,13 +23,13 @@
     years: 10,
     carPrice: 1900000,
     carYear: 2029,
-    twdDeposit: 1460289,
-    foreignDepositTwd: 180757,
-    fxRate: 32.099,
-    updatedAt: "2026-07-12T09:00:00+08:00",
-    quoteStatus: "台股 2026/07/10、美股 2026/07/10、匯率 2026/07/10 最新資料",
-    prices: { "0050": 105.80, "0056": 52.65, "00919": 29.97, "00631L": 36.78, VOO: 693.86, NVDA: 210.96 },
-    annualDividends: { "0050": 2, "0056": 3.732, "00919": 3.56, "00631L": 0, VOO: 7.668, NVDA: 0.52 },
+    twdDeposit: 1381099,
+    foreignDepositTwd: 171854,
+    fxRate: 32.34,
+    updatedAt: "2026-07-25T09:20:00+08:00",
+    quoteStatus: "台股 2026/07/23、美股 2026/07/24、匯率 2026/07/24 最新資料",
+    prices: { "0050": 103.90, "0056": 50.65, "00919": 29.50, "00631L": 35.07, VOO: 679.14, NVDA: 206.84 },
+    annualDividends: { "0050": 3.2, "0056": 4.082, "00919": 3.56, "00631L": 0, VOO: 7.668, NVDA: 0.52 },
     holdingSettings: Object.fromEntries(holdings.map((item) => [item.symbol, { units: item.units, cost: item.cost }]))
   };
 
@@ -42,14 +42,14 @@
           holdingSettings[symbol] = { ...defaults.holdingSettings[symbol] };
         });
         return { ...defaults, ...saved, dataVersion: DATA_VERSION, years: defaults.years, fxRate: defaults.fxRate, updatedAt: defaults.updatedAt,
-          quoteStatus: defaults.quoteStatus, prices: { ...defaults.prices }, annualDividends: { ...defaults.annualDividends },
+          quoteStatus: defaults.quoteStatus, prices: { "0050": 103.90, "0056": 50.65, "00919": 29.50, "00631L": 35.07, VOO: 679.14, NVDA: 206.84 },
           twdDeposit: defaults.twdDeposit, foreignDepositTwd: defaults.foreignDepositTwd, holdingSettings };
       }
       const savedQuoteTime = Date.parse(saved.updatedAt || "");
       const defaultQuoteTime = Date.parse(defaults.updatedAt);
       if (!Number.isFinite(savedQuoteTime) || savedQuoteTime < defaultQuoteTime) {
         return { ...defaults, ...saved, fxRate: defaults.fxRate, updatedAt: defaults.updatedAt,
-          quoteStatus: defaults.quoteStatus, prices: { ...defaults.prices }, annualDividends: { ...defaults.annualDividends } };
+          quoteStatus: defaults.quoteStatus, prices: { "0050": 103.90, "0056": 50.65, "00919": 29.50, "00631L": 35.07, VOO: 679.14, NVDA: 206.84 }, annualDividends: { ...defaults.annualDividends } };
       }
       return { ...defaults, ...saved };
     } catch (_error) {
