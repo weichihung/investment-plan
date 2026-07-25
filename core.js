@@ -2,7 +2,7 @@
   "use strict";
 
   const STORAGE_KEY = "investment-plan-settings-v1";
-  const DATA_VERSION = 10;
+  const DATA_VERSION = 11;
   const START_YEAR = 2026;
   const START_MONTH = 6;
   const BASE_AGE = 43;
