@@ -1,4 +1,4 @@
-﻿(function (global) {
+(function (global) {
   "use strict";
 
   const STORAGE_KEY = "investment-plan-settings-v1";
@@ -29,7 +29,7 @@
     updatedAt: "2026-07-25T09:20:00+08:00",
     quoteStatus: "台股 2026/07/23、美股 2026/07/24、匯率 2026/07/24 最新資料",
     prices: { "0050": 103.90, "0056": 50.65, "00919": 29.50, "00631L": 35.07, VOO: 679.14, NVDA: 206.84 },
-    annualDividends: { "0050": 3.2, "0056": 4.082, "00919": 3.56, "00631L": 0, VOO: 7.668, NVDA: 0.52 },
+    annualDividends: { "0050": 1.6, "0056": 4.288, "00919": 3.56, "00631L": 0, VOO: 7.668, NVDA: 0.52 },
     holdingSettings: Object.fromEntries(holdings.map((item) => [item.symbol, { units: item.units, cost: item.cost }]))
   };
 
