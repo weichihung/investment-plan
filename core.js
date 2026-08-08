@@ -2,7 +2,7 @@
   "use strict";
 
   const STORAGE_KEY = "investment-plan-settings-v1";
-  const DATA_VERSION = 13;
+  const DATA_VERSION = 14;
   const START_YEAR = 2026;
   const START_MONTH = 6;
   const BASE_AGE = 43;
@@ -43,6 +43,7 @@
         });
         return { ...defaults, ...saved, dataVersion: DATA_VERSION, years: defaults.years, fxRate: defaults.fxRate, updatedAt: defaults.updatedAt,
           quoteStatus: defaults.quoteStatus, prices: { "0050": 102.85, "0056": 51.05, "00919": 29.74, "00631L": 33.68, VOO: 710.71, NVDA: 223.96 },
+          annualDividends: { ...defaults.annualDividends },
           twdDeposit: defaults.twdDeposit, foreignDepositTwd: defaults.foreignDepositTwd, holdingSettings };
       }
       const savedQuoteTime = Date.parse(saved.updatedAt || "");
