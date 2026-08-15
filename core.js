@@ -2,12 +2,13 @@
   "use strict";
 
   const STORAGE_KEY = "investment-plan-settings-v2";
-  const DATA_VERSION = 20;
+  const DATA_VERSION = 21;
+  const DIVIDEND_NET_FACTOR = 0.8;
   const SYMBOLS = ["VOO", "NVDA", "0050", "0056", "00919", "00631L"];
 
   const holdings = [
     { symbol: "VOO", name: "Vanguard S&P 500 ETF", market: "US", unitSize: 1, group: "US", payoutMonths: [3, 6, 9, 12] },
-    { symbol: "NVDA", name: "NVIDIA", market: "US", unitSize: 1, group: "US", payoutMonths: [3, 6, 9, 12] },
+    { symbol: "NVDA", name: "NVIDIA", market: "US", unitSize: 1, group: "US", payoutMonths: [3, 6, 9, 12], dividendEstimateMode: "latestRunRate" },
     { symbol: "0050", name: "元大台灣50", market: "TW", unitSize: 1000, group: "CORE", payoutMonths: [2, 8] },
     { symbol: "0056", name: "元大高股息", market: "TW", unitSize: 1000, group: "DIVIDEND", payoutMonths: [1, 4, 7, 10] },
     { symbol: "00919", name: "群益台灣精選高息", market: "TW", unitSize: 1000, group: "DIVIDEND", payoutMonths: [3, 6, 9, 12] },
@@ -70,14 +71,14 @@
     safeWithdrawalRate: 4,
     investmentMode: "manual",
     updatedAt: "2026-08-15T08:09:55+08:00",
-    quoteStatus: "最新收盤價與配息資料",
+    quoteStatus: "最新收盤價與配息資料（已折減 20%）",
     quoteDates: { TW: "2026-08-13", US: "2026-08-14", FX: "2026-08-14" },
     holdingSettings: {
-      VOO: { units: 17.72971, cost: 576.067, price: 713.6099853515625, annualDividend: 7.6692 },
-      NVDA: { units: 115.06675, cost: 151.257, price: 225.16000366210938, annualDividend: 0.52 },
-      "0050": { units: 40.529, cost: 42.23, price: 106.69999694824219, annualDividend: 1.6 },
-      "0056": { units: 32, cost: 31.03, price: 53, annualDividend: 4.288 },
-      "00919": { units: 51, cost: 23.48, price: 30.40999984741211, annualDividend: 3.56 },
+      VOO: { units: 17.72971, cost: 576.067, price: 713.6099853515625, annualDividend: 6.13536 },
+      NVDA: { units: 115.06675, cost: 151.257, price: 225.16000366210938, annualDividend: 0.8 },
+      "0050": { units: 40.529, cost: 42.23, price: 106.69999694824219, annualDividend: 1.28 },
+      "0056": { units: 32, cost: 31.03, price: 53, annualDividend: 3.4304 },
+      "00919": { units: 51, cost: 23.48, price: 30.40999984741211, annualDividend: 2.848 },
       "00631L": { units: 2.3, cost: 34.56, price: 36.290000915527344, annualDividend: 0 }
     },
     manualPlans: buildManualPlans()
@@ -493,11 +494,15 @@
     return { price: quotes[index], date: new Date(result.timestamp[index] * 1000), dividends };
   }
 
-  function estimateAnnualDividend(dividends, frequency) {
+  function estimateAnnualDividend(dividends, frequency, mode) {
     if (!frequency || !dividends.length) return 0;
     const currentYear = new Date().getFullYear();
     const announced = dividends.filter((item) => new Date(item.date).getFullYear() === currentYear);
     const source = announced.length ? announced : dividends.slice(-frequency);
+    if (mode === "latestRunRate") {
+      const latest = source.reduce((current, item) => Number(item.date) > Number(current.date) ? item : current);
+      return Number(latest.amount) * frequency;
+    }
     return source.reduce((sum, item) => sum + Number(item.amount), 0) / source.length * frequency;
   }
 
@@ -505,7 +510,8 @@
     const yahooSymbols = { VOO: "VOO", NVDA: "NVDA", "0050": "0050.TW", "0056": "0056.TW", "00919": "00919.TW", "00631L": "00631L.TW" };
     const results = await Promise.allSettled(holdings.map(async (meta) => {
       const data = await fetchYahoo(yahooSymbols[meta.symbol]);
-      return { symbol: meta.symbol, price: data.price, annualDividend: estimateAnnualDividend(data.dividends, meta.payoutMonths.length), date: data.date };
+      const grossAnnualDividend = estimateAnnualDividend(data.dividends, meta.payoutMonths.length, meta.dividendEstimateMode);
+      return { symbol: meta.symbol, price: data.price, annualDividend: grossAnnualDividend * DIVIDEND_NET_FACTOR, date: data.date };
     }));
     let successCount = 0;
     let latestTwDate = null;
@@ -535,7 +541,7 @@
       FX: dateText(fxDate) || settings.quoteDates.FX
     };
     settings.updatedAt = new Date().toISOString();
-    settings.quoteStatus = successCount === holdings.length ? "最新收盤價與配息資料" : `部分更新（${successCount}/${holdings.length}）`;
+    settings.quoteStatus = successCount === holdings.length ? "最新收盤價與配息資料（已折減 20%）" : `部分更新（${successCount}/${holdings.length}，配息已折減 20%）`;
     saveSettings(settings);
     return settings;
   }

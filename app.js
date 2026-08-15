@@ -44,7 +44,7 @@
           <article class="hero-card"><span>目前總資產</span><strong id="currentTotal">—</strong><small id="currentProfit">—</small></article>
           <article class="metric-card"><span>銀行存款</span><strong id="currentCash">—</strong><small id="cashSafety">—</small></article>
           <article class="metric-card"><span>股票市值</span><strong id="currentStocks">—</strong><small id="stockSplit">—</small></article>
-          <article class="metric-card"><span>目前預估年股利</span><strong id="currentDividend">—</strong><small>依最新配息資料年化</small></article>
+          <article class="metric-card"><span>目前預估年股利</span><strong id="currentDividend">—</strong><small>最新配息資料年化後折減 20%</small></article>
         </div>
         <article class="panel chart-panel"><div class="panel-head"><div><span class="kicker">ASSET TRAJECTORY</span><h3>資產成長軌跡</h3></div><div class="panel-pills"><span>期末 <b id="finalAsset">—</b></span><span>累計成長 <b id="totalGrowth">—</b></span></div></div><div class="chart-box wide" id="assetTrendChart"></div><p class="chart-note">點選圖上的年份，可同步切換各年度明細。</p></article>
         <div class="two-column overview-detail">
@@ -92,9 +92,9 @@
       </section>
 
       <section class="page" data-page-panel="portfolio">
-        <div class="page-heading"><div><p class="eyebrow">CURRENT HOLDINGS</p><h2>持股現況</h2><p>成本與持有數量可修改；最新報價、配息、市值、損益與配置會自動計算。</p></div><div class="heading-actions"><span id="holdingSaveStatus">尚未修改</span><button class="button primary" id="saveHoldings">保存持股設定</button></div></div>
+        <div class="page-heading"><div><p class="eyebrow">CURRENT HOLDINGS</p><h2>持股現況</h2><p>成本與持有數量可修改；配息以最新資料折減 20%後，連動計算市值、損益與配置。</p></div><div class="heading-actions"><span id="holdingSaveStatus">尚未修改</span><button class="button primary" id="saveHoldings">保存持股設定</button></div></div>
         <div class="two-column portfolio-top"><article class="panel"><div class="panel-head"><div><span class="kicker">ALLOCATION</span><h3>目前持股配置</h3></div></div><div class="chart-box donut" id="allocationChart"></div></article><article class="panel"><div class="panel-head"><div><span class="kicker">PORTFOLIO SUMMARY</span><h3>投資組合摘要</h3></div></div><div class="portfolio-summary" id="portfolioSummary"></div></article></div>
-        <article class="panel"><div class="panel-head"><div><span class="kicker">POSITIONS</span><h3>標的明細</h3></div></div><div class="table-scroll"><table class="data-table holdings-table"><thead><tr><th>標的</th><th>市場</th><th>單位成本</th><th>最新報價</th><th>持有數量</th><th>目前市值</th><th>成本</th><th>投資損益</th><th>盈虧比</th><th>預估年股利</th><th>殖利率</th><th>持股占比</th><th>配息月份</th></tr></thead><tbody id="portfolioRows"></tbody></table></div></article>
+        <article class="panel"><div class="panel-head"><div><span class="kicker">POSITIONS</span><h3>標的明細</h3></div></div><div class="table-scroll"><table class="data-table holdings-table"><thead><tr><th>標的</th><th>市場</th><th>單位成本</th><th>最新報價</th><th>持有數量</th><th>目前市值</th><th>成本</th><th>投資損益</th><th>盈虧比</th><th>折減後年股利</th><th>殖利率</th><th>持股占比</th><th>配息月份</th></tr></thead><tbody id="portfolioRows"></tbody></table></div></article>
       </section>
 
       <section class="page" data-page-panel="plan">
@@ -106,10 +106,10 @@
       </section>
 
       <section class="page" data-page-panel="market">
-        <div class="page-heading"><div><p class="eyebrow">PRICE & DISTRIBUTION</p><h2>價格與配息</h2><p>最新收盤價作為起點，再依台／美股成長假設推估各年度股價與每股配息。</p></div><div class="market-controls"><select id="marketSymbolSelect" aria-label="選擇標的"></select><select id="marketMetricSelect" aria-label="選擇指標"><option value="price">預估股價</option><option value="annualDividend">每股年配息</option></select></div></div>
+        <div class="page-heading"><div><p class="eyebrow">PRICE & DISTRIBUTION</p><h2>價格與配息</h2><p>最新收盤價作為起點；每股年配息先依最新資料年化並折減 20%，再套用成長假設。</p></div><div class="market-controls"><select id="marketSymbolSelect" aria-label="選擇標的"></select><select id="marketMetricSelect" aria-label="選擇指標"><option value="price">預估股價</option><option value="annualDividend">折減後每股年配息</option></select></div></div>
         <div class="quote-grid" id="quoteCards"></div>
         <article class="panel chart-panel"><div class="panel-head"><div><span class="kicker">PROJECTED MARKET DATA</span><h3 id="marketChartTitle">價格推估</h3></div></div><div class="chart-box" id="marketChart"></div></article>
-        <article class="panel"><div class="panel-head"><div><span class="kicker">YEARLY PROJECTION</span><h3>逐年價格與配息推估</h3></div></div><div class="table-scroll"><table class="data-table"><thead><tr><th>年度</th><th>年齡</th><th>預估股價</th><th>每股年配息</th><th>股價累計成長</th><th>配息累計成長</th></tr></thead><tbody id="marketRows"></tbody></table></div></article>
+        <article class="panel"><div class="panel-head"><div><span class="kicker">YEARLY PROJECTION</span><h3>逐年價格與配息推估</h3></div></div><div class="table-scroll"><table class="data-table"><thead><tr><th>年度</th><th>年齡</th><th>預估股價</th><th>折減後每股年配息</th><th>股價累計成長</th><th>配息累計成長</th></tr></thead><tbody id="marketRows"></tbody></table></div></article>
       </section>
 
       <section class="page" data-page-panel="holdings">
@@ -119,7 +119,7 @@
       </section>
 
       <section class="page" data-page-panel="dividends">
-        <div class="page-heading"><div><p class="eyebrow">MONTHLY DISTRIBUTION</p><h2>各年度月配息</h2><p>依各標的配息月份，把保守估計的年度股利分配至 12 個月。</p></div><select class="year-select" id="dividendYearSelect" aria-label="選擇年度"></select></div>
+        <div class="page-heading"><div><p class="eyebrow">MONTHLY DISTRIBUTION</p><h2>各年度月配息</h2><p>依各標的配息月份，把最新資料折減 20%後的年度股利分配至 12 個月。</p></div><select class="year-select" id="dividendYearSelect" aria-label="選擇年度"></select></div>
         <div class="dividend-kpis"><article><span>年度股利合計</span><strong id="dividendYearTotal">—</strong></article><article><span>平均每月股利</span><strong id="dividendMonthlyAverage">—</strong></article><article><span>最高配息月份</span><strong id="dividendPeakMonth">—</strong></article></div>
         <article class="panel chart-panel"><div class="panel-head"><div><span class="kicker">MONTHLY INCOME</span><h3 id="monthlyDividendTitle">月配息組成</h3></div></div><div class="chart-box" id="monthlyDividendChart"></div></article>
         <article class="panel"><div class="panel-head"><div><span class="kicker">MONTHLY DETAIL</span><h3>每月標的配息明細</h3></div></div><div class="table-scroll"><table class="data-table"><thead><tr><th>月份</th><th>VOO</th><th>NVDA</th><th>0050</th><th>0056</th><th>00919</th><th>00631L</th><th>月合計</th></tr></thead><tbody id="monthlyDividendRows"></tbody></table></div></article>
@@ -265,7 +265,7 @@
     const base = calculated.portfolio;
     $("#marketSymbolSelect").innerHTML = base.map((item) => `<option value="${item.symbol}" ${item.symbol === marketSymbol ? "selected" : ""}>${item.symbol}・${item.name}</option>`).join("");
     $("#marketMetricSelect").value = marketMetric;
-    $("#quoteCards").innerHTML = base.map((item) => `<article class="${item.symbol === marketSymbol ? "selected" : ""}" data-market-symbol="${item.symbol}"><span>${item.market}</span><h3>${item.symbol}</h3><strong>${nativeMoney(item, item.price)}</strong><small>年配息 ${nativeMoney(item, item.annualDividend)}・殖利率 ${percent(item.yieldRate, 2)}</small></article>`).join("");
+    $("#quoteCards").innerHTML = base.map((item) => `<article class="${item.symbol === marketSymbol ? "selected" : ""}" data-market-symbol="${item.symbol}"><span>${item.market}</span><h3>${item.symbol}</h3><strong>${nativeMoney(item, item.price)}</strong><small>折減後年配息 ${nativeMoney(item, item.annualDividend)}・殖利率 ${percent(item.yieldRate, 2)}</small></article>`).join("");
     const item = base.find((entry) => entry.symbol === marketSymbol);
     $("#marketChartTitle").textContent = `${marketSymbol} ${marketMetric === "price" ? "股價" : "每股年配息"}推估`;
     const first = calculated.market[0].securities[marketSymbol];
@@ -443,7 +443,7 @@
         settings = await core.updateQuotes(settings);
         holdingDraft = core.clone(settings.holdingSettings);
         renderAll();
-        toast("報價、匯率與配息已更新");
+        toast("報價、匯率與折減後配息已更新");
       } catch (error) {
         toast(error.message);
       } finally {
