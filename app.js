@@ -83,7 +83,7 @@
           </div><div class="derived-line"><span>銀行期初合計</span><strong id="bankTotal">—</strong></div></fieldset>
           <fieldset class="setting-card"><legend><b>五</b>購車與車貸</legend><div class="field-grid">
             <label>購車年份<input name="carYear" type="number" min="0" max="2100"></label><label>購車總價<input name="carPrice" type="number" min="0" step="10000"></label><label>頭期款比例 %<input name="carDownPaymentRate" type="number" min="0" max="100" step="1"></label><label>貸款年利率 %<input name="carLoanRate" type="number" min="0" step="0.1"></label><label>貸款期數（月）<input name="carLoanMonths" type="number" min="0"></label><label>車保養＋保險／年<input name="annualVehicleCost" type="number" min="0" step="1000"></label>
-          </div><div class="derived-grid"><span>頭期款<strong id="carDownPayment">—</strong></span><span>貸款金額<strong id="carPrincipal">—</strong></span><span>每月還款<strong id="carMonthlyPayment">—</strong></span><span>貸款總利息<strong id="carInterest">—</strong></span></div></fieldset>
+          </div><div class="derived-grid"><span>頭期款<strong id="carDownPayment">—</strong></span><span>貸款金額<strong id="carPrincipal">—</strong></span><span>每月還款<strong id="carMonthlyPayment">—</strong></span><span>貸款總利息<strong id="carInterest">—</strong></span></div><p class="panel-footnote">頭期款由購車前一年度銀行期末餘額支付，不出售 00919；現金不足時會顯示警示。</p></fieldset>
           <fieldset class="setting-card"><legend><b>六</b>購屋與房貸</legend><div class="field-grid">
             <label>購屋年份（0＝不購屋）<input name="homeYear" type="number" min="0" max="2100"></label><label>房屋總價<input name="homePrice" type="number" min="0" step="10000"></label><label>頭期款比例 %<input name="homeDownPaymentRate" type="number" min="0" max="100" step="1"></label><label>房貸年利率 %<input name="homeLoanRate" type="number" min="0" step="0.1"></label><label>貸款期數（月）<input name="homeLoanMonths" type="number" min="0"></label><label>房屋持有成本／年<input name="annualHomeCost" type="number" min="0" step="1000"></label>
           </div><div class="derived-grid"><span>頭期款<strong id="homeDownPayment">—</strong></span><span>貸款金額<strong id="homePrincipal">—</strong></span><span>每月還款<strong id="homeMonthlyPayment">—</strong></span><span>貸款總利息<strong id="homeInterest">—</strong></span></div></fieldset>
@@ -181,7 +181,8 @@
     notes.push(`${row.year} 年採用${settings.investmentMode === "manual" ? "附檔手動投入計畫" : "現金目標自動配置"}，年度投入 ${money(row.plannedInvestment)}。`);
     if (row.year === Number(settings.startYear)) notes.push(`首年計入 ${row.activeMonths} 個月，薪資、支出、投入及股利均按此期間估算。`);
     if (row.carLoanPaymentMonths > 0) notes.push(`本年計入 ${row.carLoanPaymentMonths} 個月車貸，共 ${money(row.carLoan)}。`);
-    if (row.carDownPayment > 0) notes.push(`購車頭期款 ${money(row.carDownPayment)}，先出售 00919，差額由現金支應。`);
+    if (row.carDownPayment > 0 && row.carDownPaymentShortfall <= 0) notes.push(`購車頭期款 ${money(row.carDownPayment)}，由上一年度銀行期末 ${money(row.openingCash)} 支付，不出售 00919。`);
+    if (row.carDownPaymentShortfall > 0) notes.push(`上一年度銀行期末僅 ${money(row.openingCash)}，不足支付頭期款 ${money(row.carDownPaymentShortfall)}；系統不會為頭期款出售 00919 或其他股票。`);
     if (row.stockSales > 0) notes.push(`為維持銀行存款下限，本年共出售持股 ${money(row.stockSales)}；持股與後續股利已同步減少。`);
     if (row.cash <= Number(settings.bankMinimum) + 1) notes.push(`銀行期末接近 ${money(settings.bankMinimum)} 下限，投資與大型支出需持續留意。`);
     $("#planningNotes").innerHTML = notes.map((text, index) => `<div><span>${index + 1}</span><p>${text}</p></div>`).join("");

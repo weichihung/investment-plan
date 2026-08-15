@@ -2,7 +2,7 @@ $ErrorActionPreference = "Stop"
 
 $repository = "weichihung/investment-plan"
 $branch = "main"
-$message = "Apply 20% dividend reduction and official NVDA run rate"
+$message = "Fund car down payment from prior-year cash"
 $files = @(
   @{ Local = "deploy/index.html"; Remote = "index.html" },
   @{ Local = "deploy/mobile.html"; Remote = "mobile.html" },

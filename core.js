@@ -2,7 +2,7 @@
   "use strict";
 
   const STORAGE_KEY = "investment-plan-settings-v2";
-  const DATA_VERSION = 21;
+  const DATA_VERSION = 22;
   const DIVIDEND_NET_FACTOR = 0.8;
   const SYMBOLS = ["VOO", "NVDA", "0050", "0056", "00919", "00631L"];
 
@@ -356,6 +356,8 @@
         : 0;
       const carLoan = car.monthlyPayment * carLoanPaymentMonths;
       const carDownPayment = year === Number(settings.carYear) ? car.downPayment : 0;
+      const carDownPaymentFromPriorCash = Math.min(openingCash, carDownPayment);
+      const carDownPaymentShortfall = Math.max(0, carDownPayment - openingCash);
       const vehicleCost = Number(settings.carYear) > 0 && year >= Number(settings.carYear) ? Number(settings.annualVehicleCost) : 0;
 
       const home = loanDetails(settings.homePrice, settings.homeDownPaymentRate, settings.homeLoanRate, settings.homeLoanMonths);
@@ -369,11 +371,6 @@
       const homeCost = Number(settings.homeYear) > 0 && year >= Number(settings.homeYear) ? Number(settings.annualHomeCost) : 0;
 
       cash += salary + dividendIncome;
-      if (carDownPayment) {
-        const carStockFunding = sell("00919", carDownPayment, market);
-        cash += carStockFunding;
-        stockSales += carStockFunding;
-      }
       cash -= family + leisure + fixed + carLoan + carDownPayment + vehicleCost + homeLoan + homeDownPayment + homeCost;
 
       let investments;
@@ -387,8 +384,9 @@
       cash -= plannedInvestment;
       Object.entries(investments).forEach(([symbol, amount]) => buy(symbol, amount, market));
 
-      if (cash < Number(settings.bankMinimum)) {
-        stockSales += sellForCash(Number(settings.bankMinimum) - cash, market);
+      const cashWithoutCarDownPayment = cash + carDownPayment;
+      if (cashWithoutCarDownPayment < Number(settings.bankMinimum)) {
+        stockSales += sellForCash(Number(settings.bankMinimum) - cashWithoutCarDownPayment, market);
       }
 
       const securityRows = SYMBOLS.map((symbol) => {
@@ -431,7 +429,8 @@
 
       rows.push({
         year, age, activeMonths, salaryMonths, openingCash, salary, dividendIncome, income,
-        family, leisure, fixed, carLoan, carLoanPaymentMonths, carDownPayment, vehicleCost,
+        family, leisure, fixed, carLoan, carLoanPaymentMonths, carDownPayment,
+        carDownPaymentFromPriorCash, carDownPaymentShortfall, vehicleCost,
         homeLoan, homeLoanPaymentMonths, homeDownPayment, homeCost, expense,
         plannedInvestment, investments, stockSales, transitionSale, netCashFlow, cash,
         positions: { ...positions }, market, securities: securityRows, twStocks, usStocks, stockValue,
