@@ -44,8 +44,11 @@ Maintain a personal investment-planning system that provides:
 - Salary is counted for six months in 2026 and 14 months annually from 2027, ending before age 65.
 - The 2026 forecast rolls monthly: June uses six remaining months, July uses five, and the count decreases through year-end.
 - Holding cost and quantity edits are persisted only when the user presses the save-holdings button.
-- Car financing uses 2.5% annual interest and 48 monthly payments.
-- The car down payment sells 00919 first and must leave at least TWD 800,000 cash.
+- Current car defaults are 2030, TWD 2,000,000, 50% down payment, 0% loan interest, 40 monthly payments and TWD 75,000 annual vehicle cost; all remain user-adjustable.
+- The car down payment is paid only from the prior year's ending bank cash. Never sell 00919 or any other security to fund it.
+- If prior-year cash is insufficient, show the shortfall and do not trigger stock sales to restore the cash reduction caused by the down payment.
+- All dividend estimates use the latest selected distribution data multiplied by 80%.
+- NVDA uses the latest official quarterly dividend annualized and then multiplied by 80%, rather than averaging old and new transition-year quarterly rates.
 - Taiwan holdings are displayed in lots; US holdings are displayed in shares.
 
 ## Quote Update Workflow
@@ -54,7 +57,8 @@ When the user requests `更新報價` or asks to update holdings plus quotes:
 
 - Refresh latest completed close prices for 0050, 0056, 00919, 00631L, VOO and NVDA.
 - Refresh USD/TWD using the latest available market rate.
-- Refresh or estimate annual dividends from the latest available distribution data.
+- Refresh or estimate gross annual dividends from the latest available distribution data, then apply the 80% net factor to every security.
+- Use NVDA's latest official quarterly run rate for its annual estimate before applying the 80% factor.
 - Update user-provided deposits, units and cost basis exactly as stated.
 - Increment cache/version values when needed so both published pages load fresh files.
 - Rebuild the deploy files for both desktop and mobile.
@@ -69,6 +73,9 @@ When the user requests `更新報價` or asks to update holdings plus quotes:
 - Validate syntax after JavaScript changes.
 - Test key forecast years and ensure numeric outputs remain finite.
 - Confirm investment allocations, holdings and displayed totals reconcile.
+- Confirm the car-purchase year uses prior-year ending cash, reports zero car-funded stock sales and preserves 00919 units.
+- Confirm insufficient car cash produces a warning without selling securities.
+- Confirm all displayed and forecast dividends use the 80% net factor.
 - Verify both desktop and mobile interfaces after material UI changes.
 - After deployment, test the public GitHub Pages desktop and mobile URLs.
 

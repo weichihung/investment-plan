@@ -2,7 +2,7 @@ $ErrorActionPreference = "Stop"
 
 $repository = "weichihung/investment-plan"
 $branch = "main"
-$message = "Fund car down payment from prior-year cash"
+$message = "Save confirmed investment planning rules"
 $files = @(
   @{ Local = "deploy/index.html"; Remote = "index.html" },
   @{ Local = "deploy/mobile.html"; Remote = "mobile.html" },
@@ -12,6 +12,9 @@ $files = @(
   @{ Local = "deploy/app.js"; Remote = "app.js" },
   @{ Local = "deploy/d3.min.js"; Remote = "d3.min.js" },
   @{ Local = "deploy/README.md"; Remote = "README.md" },
+  @{ Local = "SKILL.md"; Remote = "SKILL.md" },
+  @{ Local = "AGENTS.md"; Remote = "AGENTS.md" },
+  @{ Local = "agent.md"; Remote = "agent.md" },
   @{ Local = "scripts/fetch-market.ps1"; Remote = "scripts/fetch-market.ps1" },
   @{ Local = "scripts/publish-github-pages.ps1"; Remote = "scripts/publish-github-pages.ps1" }
 )

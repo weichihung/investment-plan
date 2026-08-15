@@ -29,9 +29,9 @@ description: Maintain and extend this personal investment planning website, incl
 - Use six salary and investment months in 2026; use 14 salary months from 2027 onward.
 - Stop salary income before age 65.
 - Use a default annual return of 6% and a default planning period of 10 years.
-- Keep at least TWD 800,000 when funding the car down payment.
-- Model the car loan at 2.5% annual interest over 48 monthly payments.
-- Sell 00919 first for the car down payment; use only cash above TWD 800,000 for any shortfall.
+- Keep car price, year, down-payment ratio, loan rate and term user-adjustable; read the authoritative defaults from `shared/core.js`.
+- Pay the car down payment only from the prior year's ending bank cash. Never sell 00919 or any other security to fund it.
+- When prior-year cash is insufficient, expose `carDownPaymentShortfall` and show a warning. Do not trigger stock sales to restore cash reduced by the car down payment.
 - Before age 61, allocate investments according to the growth allocation in `allocationForAge()`.
 - At age 61, sell all 00631L and NVDA and use the defensive allocation.
 - Display Taiwan holdings in lots of 1,000 shares and US holdings in shares.
@@ -45,9 +45,11 @@ When the user requests updated quotes or dividends:
 1. Browse current authoritative or primary market sources when possible.
 2. Record the latest completed trading-day close and its exact date.
 3. Update USD/TWD using the latest available market rate.
-4. Estimate annual dividends from current-year announced distributions and expected frequency.
-5. Preserve the last valid values if a remote update fails.
-6. Never label cost basis as latest price.
+4. Estimate gross annual dividends from current-year announced distributions and expected frequency.
+5. Store and display dividends after applying `DIVIDEND_NET_FACTOR = 0.8` to every security.
+6. For NVDA, annualize the latest official quarterly dividend before applying the 20% reduction; do not average a transition year's old and new quarterly rates.
+7. Preserve the last valid values if a remote update fails.
+8. Never label cost basis as latest price.
 
 ## Quote Update Checklist
 
@@ -55,14 +57,15 @@ For requests like `更新報價` or `更新下述及更新報價`:
 
 1. Apply user-provided deposits, holding units and cost basis exactly.
 2. Fetch latest close prices, dividend data and USD/TWD.
-3. Update `settingsDefaults` in `shared/core.js`.
-4. Increment `DATA_VERSION` when browser-stored defaults must be replaced.
-5. Update cache query versions in desktop and mobile HTML when scripts or defaults change.
-6. Rebuild `deploy/index.html`, `deploy/mobile.html`, shared scripts and styles.
-7. Validate JavaScript syntax and run forecast sanity checks.
-8. Publish through the GitHub integration when available.
-9. Verify the public desktop and mobile URLs after GitHub Pages updates.
-10. Final response must include the two links:
+3. Apply the latest dividend estimates using the 80% net factor, with NVDA based on its latest official quarterly run rate.
+4. Update `settingsDefaults` in `shared/core.js`.
+5. Increment `DATA_VERSION` when browser-stored defaults must be replaced.
+6. Update cache query versions in desktop and mobile HTML when scripts or defaults change.
+7. Rebuild `deploy/index.html`, `deploy/mobile.html`, shared scripts and styles.
+8. Validate JavaScript syntax and run forecast sanity checks.
+9. Publish through the GitHub integration when available.
+10. Verify the public desktop and mobile URLs after GitHub Pages updates.
+11. Final response must include the two links:
     - `https://weichihung.github.io/investment-plan/`
     - `https://weichihung.github.io/investment-plan/mobile.html`
 
@@ -79,6 +82,9 @@ For requests like `更新報價` or `更新下述及更新報價`:
 - Parse `shared/core.js` and `shared/app.js` for syntax errors.
 - Verify all forecast numeric fields are finite.
 - Check at least 2026, the car-purchase year, the first post-2027 allocation year, and age 61 when included.
+- In the car-purchase year, confirm the down payment is sourced from `openingCash`, `stockSales` excludes car funding and 00919 units are unchanged except for explicit investment or allocation rules.
+- Test an insufficient prior-year cash scenario: show `carDownPaymentShortfall`, allow cash to fall below its target and do not sell securities for the down payment.
+- Confirm every stored annual dividend equals the latest selected gross estimate multiplied by 80%; confirm NVDA uses the latest official quarterly run rate.
 - Confirm yearly security investments sum to `plannedInvestment`.
 - Confirm projected security market values sum to the displayed yearly stock total.
 - Confirm changing TWD and foreign deposits changes cash and total assets by the same amount.
@@ -88,7 +94,8 @@ For requests like `更新報價` or `更新下述及更新報價`:
 
 1. Copy the desktop page to `deploy/index.html` and mobile page to `deploy/mobile.html`.
 2. Copy shared scripts and styles into `deploy/` and change references to flat relative paths.
-3. Publish the root of the `main` branch to GitHub Pages.
-4. Verify both URLs after deployment:
+3. Publish `SKILL.md`, `AGENTS.md` and `agent.md` with the site so confirmed maintenance rules remain in the repository.
+4. Publish the root of the `main` branch to GitHub Pages.
+5. Verify both URLs after deployment:
    - `https://weichihung.github.io/investment-plan/`
    - `https://weichihung.github.io/investment-plan/mobile.html`
