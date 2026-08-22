@@ -28,7 +28,10 @@
   const percent = core.formatPercent;
   const signedMoney = (value) => `${value >= 0 ? "+" : "−"}${money(Math.abs(value))}`;
   const unitLabel = (item) => item.market === "TW" ? "張" : "股";
-  const nativeMoney = (item, value) => item.market === "US" ? core.formatUsd(value) : money(value);
+  const nativeMoney = (item, value) => {
+    const amount = new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 4 }).format(Number(value) || 0);
+    return `${item.market === "US" ? "US$" : "NT$"}${amount}`;
+  };
   const compactMoney = (value) => {
     const amount = Math.abs(Number(value) || 0);
     if (amount >= 1000000) return `${(value / 1000000).toFixed(amount >= 10000000 ? 1 : 2).replace(/\.0+$/, "")}M`;

@@ -2,7 +2,7 @@ $ErrorActionPreference = "Stop"
 
 $repository = "weichihung/investment-plan"
 $branch = "main"
-$message = "Update portfolio and market data 2026-08-22"
+$message = "Show exact unit quotes for 2026-08-22 update"
 $files = @(
   @{ Local = "deploy/index.html"; Remote = "index.html" },
   @{ Local = "deploy/mobile.html"; Remote = "mobile.html" },

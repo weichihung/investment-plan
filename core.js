@@ -2,7 +2,7 @@
   "use strict";
 
   const STORAGE_KEY = "investment-plan-settings-v2";
-  const DATA_VERSION = 23;
+  const DATA_VERSION = 24;
   const DIVIDEND_NET_FACTOR = 0.8;
   const SYMBOLS = ["VOO", "NVDA", "0050", "0056", "00919", "00631L"];
 
