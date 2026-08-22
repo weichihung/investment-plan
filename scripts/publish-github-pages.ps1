@@ -2,7 +2,7 @@ $ErrorActionPreference = "Stop"
 
 $repository = "weichihung/investment-plan"
 $branch = "main"
-$message = "Save confirmed investment planning rules"
+$message = "Update portfolio and market data 2026-08-22"
 $files = @(
   @{ Local = "deploy/index.html"; Remote = "index.html" },
   @{ Local = "deploy/mobile.html"; Remote = "mobile.html" },

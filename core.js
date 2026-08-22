@@ -2,7 +2,7 @@
   "use strict";
 
   const STORAGE_KEY = "investment-plan-settings-v2";
-  const DATA_VERSION = 22;
+  const DATA_VERSION = 23;
   const DIVIDEND_NET_FACTOR = 0.8;
   const SYMBOLS = ["VOO", "NVDA", "0050", "0056", "00919", "00631L"];
 
@@ -39,7 +39,7 @@
     endAge: 65,
     autoRollFirstYearMonths: true,
     firstYearMonths: 5,
-    fxRate: 32.00400161743164,
+    fxRate: 31.81999969482422,
     twPriceGrowth: 6,
     usPriceGrowth: 6.5,
     twDividendGrowth: 3,
@@ -51,8 +51,8 @@
     fixedMonthly: 22000,
     expenseInflation: 2.5,
     annualSalaryMonths: 14,
-    twdDeposit: 1304677,
-    foreignDepositTwd: 155270,
+    twdDeposit: 1352808,
+    foreignDepositTwd: 143707,
     bankMinimum: 650000,
     cashTargetBefore61: 800000,
     cashTargetAfter61: 1500000,
@@ -70,16 +70,16 @@
     annualHomeCost: 0,
     safeWithdrawalRate: 4,
     investmentMode: "manual",
-    updatedAt: "2026-08-15T08:09:55+08:00",
+    updatedAt: "2026-08-22T10:46:54+08:00",
     quoteStatus: "最新收盤價與配息資料（已折減 20%）",
-    quoteDates: { TW: "2026-08-13", US: "2026-08-14", FX: "2026-08-14" },
+    quoteDates: { TW: "2026-08-21", US: "2026-08-21", FX: "2026-08-21" },
     holdingSettings: {
-      VOO: { units: 17.72971, cost: 576.067, price: 713.6099853515625, annualDividend: 6.13536 },
-      NVDA: { units: 115.06675, cost: 151.257, price: 225.16000366210938, annualDividend: 0.8 },
-      "0050": { units: 40.529, cost: 42.23, price: 106.69999694824219, annualDividend: 1.28 },
-      "0056": { units: 32, cost: 31.03, price: 53, annualDividend: 3.4304 },
-      "00919": { units: 51, cost: 23.48, price: 30.40999984741211, annualDividend: 2.848 },
-      "00631L": { units: 2.3, cost: 34.56, price: 36.290000915527344, annualDividend: 0 }
+      VOO: { units: 17.86984, cost: 577.151, price: 703.7100219726562, annualDividend: 6.13536 },
+      NVDA: { units: 115.95353, cost: 151.826, price: 214.72000122070312, annualDividend: 0.8 },
+      "0050": { units: 40.895, cost: 42.8, price: 104.65, annualDividend: 1.28 },
+      "0056": { units: 32, cost: 31.03, price: 52.4, annualDividend: 3.4304 },
+      "00919": { units: 51, cost: 23.48, price: 30.8, annualDividend: 2.848 },
+      "00631L": { units: 0, cost: 34.56, price: 34.84, annualDividend: 0 }
     },
     manualPlans: buildManualPlans()
   };
