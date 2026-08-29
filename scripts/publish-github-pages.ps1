@@ -1,8 +1,11 @@
+param(
+  [string]$Message = "Update investment plan"
+)
+
 $ErrorActionPreference = "Stop"
 
 $repository = "weichihung/investment-plan"
 $branch = "main"
-$message = "Show exact unit quotes for 2026-08-22 update"
 $files = @(
   @{ Local = "deploy/index.html"; Remote = "index.html" },
   @{ Local = "deploy/mobile.html"; Remote = "mobile.html" },
@@ -16,6 +19,7 @@ $files = @(
   @{ Local = "AGENTS.md"; Remote = "AGENTS.md" },
   @{ Local = "agent.md"; Remote = "agent.md" },
   @{ Local = "scripts/fetch-market.ps1"; Remote = "scripts/fetch-market.ps1" },
+  @{ Local = "scripts/import-workbook.py"; Remote = "scripts/import-workbook.py" },
   @{ Local = "scripts/publish-github-pages.ps1"; Remote = "scripts/publish-github-pages.ps1" }
 )
 
@@ -74,7 +78,7 @@ $tree = Invoke-GitHubJson -Endpoint "repos/$repository/git/trees" -Method "POST"
 }
 
 $commit = Invoke-GitHubJson -Endpoint "repos/$repository/git/commits" -Method "POST" -Body @{
-  message = $message
+  message = $Message
   tree = $tree.sha
   parents = @($baseCommitSha)
 }
