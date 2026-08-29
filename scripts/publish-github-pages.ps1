@@ -10,6 +10,7 @@ $files = @(
   @{ Local = "deploy/index.html"; Remote = "index.html" },
   @{ Local = "deploy/mobile.html"; Remote = "mobile.html" },
   @{ Local = "deploy/styles.css"; Remote = "styles.css" },
+  @{ Local = "deploy/market-config.js"; Remote = "market-config.js" },
   @{ Local = "deploy/core.js"; Remote = "core.js" },
   @{ Local = "deploy/charts.js"; Remote = "charts.js" },
   @{ Local = "deploy/app.js"; Remote = "app.js" },
@@ -18,9 +19,19 @@ $files = @(
   @{ Local = "SKILL.md"; Remote = "SKILL.md" },
   @{ Local = "AGENTS.md"; Remote = "AGENTS.md" },
   @{ Local = "agent.md"; Remote = "agent.md" },
+  @{ Local = "market-data.json"; Remote = "market-data.json" },
+  @{ Local = "package.json"; Remote = "package.json" },
+  @{ Local = ".github/workflows/update-market-data.yml"; Remote = ".github/workflows/update-market-data.yml" },
   @{ Local = "scripts/fetch-market.ps1"; Remote = "scripts/fetch-market.ps1" },
+  @{ Local = "scripts/fetch-market.mjs"; Remote = "scripts/fetch-market.mjs" },
   @{ Local = "scripts/import-workbook.py"; Remote = "scripts/import-workbook.py" },
-  @{ Local = "scripts/publish-github-pages.ps1"; Remote = "scripts/publish-github-pages.ps1" }
+  @{ Local = "scripts/publish-github-pages.ps1"; Remote = "scripts/publish-github-pages.ps1" },
+  @{ Local = "worker/wrangler.toml"; Remote = "worker/wrangler.toml" },
+  @{ Local = "worker/README.md"; Remote = "worker/README.md" },
+  @{ Local = "worker/src/index.js"; Remote = "worker/src/index.js" },
+  @{ Local = "worker/src/market.js"; Remote = "worker/src/market.js" },
+  @{ Local = "worker/test/market.test.mjs"; Remote = "worker/test/market.test.mjs" },
+  @{ Local = "test/core-market.test.cjs"; Remote = "test/core-market.test.cjs" }
 )
 
 function Invoke-GitHubJson {
@@ -89,3 +100,4 @@ Invoke-GitHubJson -Endpoint "repos/$repository/git/refs/heads/$branch" -Method "
 } | Out-Null
 
 Write-Output "published $($files.Count) files in commit $($commit.sha)"
+

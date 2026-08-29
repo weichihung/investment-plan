@@ -1,0 +1,10 @@
+{
+  "name": "investment-plan",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "market:fetch": "node scripts/fetch-market.mjs --output market-data.json",
+    "market:test": "node --test worker/test/market.test.mjs test/core-market.test.cjs"
+  }
+}
+

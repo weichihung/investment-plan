@@ -41,6 +41,17 @@ python scripts/import-workbook.py "C:\路徑\投資試算表_2026-2048.xlsx" --a
 
 匯入會保留網站已確認的購車規則：頭期款只使用前一年度銀行期末現金，不因購車出售 00919 或其他股票。匯入完成後再執行 GitHub Pages 發布，即可讓兩個版本同步上線。
 
+## 網站即時更新報價
+
+「更新報價」按鈕依序使用三層來源：
+
+1. Cloudflare Worker 即時抓取並快取市場資料。
+2. GitHub Actions 每日產生的 `market-data.json` 備援快照。
+3. 舊版瀏覽器直接查詢，僅作最後回退。
+
+台股收盤價優先使用證交所 OpenAPI；美股、USD/TWD 與配息事件由後端資料來源取得。所有配息仍依確認規則折減 20%，畫面會保留各市場實際交易日期。Worker 程式位於 `worker/`，每日排程位於 `.github/workflows/update-market-data.yml`。
+
 ## 本機預覽
 
 以專案根目錄啟動靜態網站後開啟 `/web/` 或 `/mobile/`。
+

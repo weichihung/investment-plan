@@ -67,6 +67,9 @@ When the user requests updated quotes or dividends:
 6. For NVDA, annualize the latest official quarterly dividend before applying the 20% reduction; do not average a transition year's old and new quarterly rates.
 7. Preserve the last valid values if a remote update fails.
 8. Never label cost basis as latest price.
+9. For the website button, use this source order: Cloudflare Worker `/market/refresh`, GitHub raw `market-data.json`, then legacy direct Yahoo retrieval.
+10. Generate the shared snapshot with `node scripts/fetch-market.mjs --output market-data.json`; Taiwan prices use TWSE OpenAPI and all records carry exact dates and sources.
+11. Validate Worker market logic with `node --test worker/test/market.test.mjs` before deployment.
 
 ## Quote Update Checklist
 
@@ -85,6 +88,15 @@ For requests like `更新報價` or `更新下述及更新報價`:
 11. Final response must include the two links:
     - `https://weichihung.github.io/investment-plan/`
     - `https://weichihung.github.io/investment-plan/mobile.html`
+
+## Live Quote Deployment
+
+1. Keep the static frontend on GitHub Pages.
+2. Configure the deployed Worker URL in `shared/market-config.js`; never put API keys or GitHub tokens in this public file.
+3. Deploy `worker/` with Wrangler only after Cloudflare authentication.
+4. Add the optional `MARKET_KV` binding when cross-device snapshot persistence is available.
+5. Publish `.github/workflows/update-market-data.yml` with contents-write permission so the raw GitHub backup remains current.
+6. Verify Worker CORS from `https://weichihung.github.io`, then click the update button on both desktop and mobile pages.
 
 ## Implementation Workflow
 
@@ -117,3 +129,4 @@ For requests like `更新報價` or `更新下述及更新報價`:
 5. Verify both URLs after deployment:
    - `https://weichihung.github.io/investment-plan/`
    - `https://weichihung.github.io/investment-plan/mobile.html`
+

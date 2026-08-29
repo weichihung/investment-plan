@@ -224,6 +224,7 @@ def rebuild_deploy(root: Path) -> None:
     )
     for source, target in (
         (root / "web" / "styles.css", deploy / "styles.css"),
+        (root / "shared" / "market-config.js", deploy / "market-config.js"),
         (root / "shared" / "core.js", deploy / "core.js"),
         (root / "shared" / "charts.js", deploy / "charts.js"),
         (root / "shared" / "app.js", deploy / "app.js"),
@@ -250,7 +251,7 @@ def apply_import(root: Path, data: dict) -> int:
     for relative in ("web/index.html", "mobile/index.html"):
         path = root / relative
         html = path.read_text(encoding="utf-8")
-        html = re.sub(r"((?:styles|core|app)\.js|styles\.css)\?v=\d+", rf"\1?v={new_version}", html)
+        html = re.sub(r"((?:market-config|core|app)\.js|styles\.css)\?v=\d+", rf"\1?v={new_version}", html)
         path.write_text(html, encoding="utf-8")
 
     rebuild_deploy(root)
@@ -308,3 +309,4 @@ if __name__ == "__main__":
     except Exception as error:
         print(f"匯入失敗：{error}", file=sys.stderr)
         raise SystemExit(1)
+

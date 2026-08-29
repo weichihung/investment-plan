@@ -1,0 +1,13 @@
+name = "investment-plan-market-api"
+main = "src/index.js"
+compatibility_date = "2026-08-29"
+workers_dev = true
+
+[vars]
+ALLOWED_ORIGINS = "https://weichihung.github.io"
+
+# After Cloudflare login, create a KV namespace and add its binding here:
+# [[kv_namespaces]]
+# binding = "MARKET_KV"
+# id = "<created namespace id>"
+

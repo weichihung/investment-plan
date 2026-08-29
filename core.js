@@ -760,7 +760,56 @@
     return source.reduce((sum, item) => sum + Number(item.amount), 0) / source.length * frequency;
   }
 
-  async function updateQuotes(settings) {
+  function validMarketNumber(value) {
+    return value !== null && value !== "" && Number.isFinite(Number(value));
+  }
+
+  async function fetchMarketJson(url, timeoutMs = 20000) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const requestUrl = new URL(url);
+      requestUrl.searchParams.set("_", Date.now());
+      const response = await fetch(requestUrl.toString(), { cache: "no-store", signal: controller.signal });
+      if (!response.ok) throw new Error(`市場資料服務回應 ${response.status}`);
+      return response.json();
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
+  function applyMarketSnapshot(settings, snapshot, sourceLabel) {
+    if (Number(snapshot?.schemaVersion) !== 1 || !snapshot.quotes) throw new Error("市場資料格式不正確");
+    let successCount = 0;
+    let latestTwDate = null;
+    let latestUsDate = null;
+    holdings.forEach((meta) => {
+      const quote = snapshot.quotes[meta.symbol];
+      if (!quote || !validMarketNumber(quote.price) || Number(quote.price) <= 0) return;
+      successCount += 1;
+      settings.holdingSettings[meta.symbol].price = Number(quote.price);
+      if (validMarketNumber(quote.annualDividend) && Number(quote.annualDividend) >= 0) {
+        settings.holdingSettings[meta.symbol].annualDividend = Number(quote.annualDividend);
+      }
+      if (meta.market === "TW" && quote.date && (!latestTwDate || quote.date > latestTwDate)) latestTwDate = quote.date;
+      if (meta.market === "US" && quote.date && (!latestUsDate || quote.date > latestUsDate)) latestUsDate = quote.date;
+    });
+    if (!successCount) throw new Error("市場資料沒有可用報價");
+
+    const fx = snapshot.fx?.USD_TWD;
+    if (validMarketNumber(fx?.rate) && Number(fx.rate) > 0) settings.fxRate = Number(fx.rate);
+    settings.quoteDates = {
+      TW: latestTwDate || settings.quoteDates.TW,
+      US: latestUsDate || settings.quoteDates.US,
+      FX: fx?.date || settings.quoteDates.FX
+    };
+    settings.updatedAt = snapshot.generatedAt || new Date().toISOString();
+    settings.quoteStatus = `${sourceLabel}（${successCount}/${holdings.length}，配息已折減 20%）`;
+    saveSettings(settings);
+    return settings;
+  }
+
+  async function updateQuotesDirect(settings) {
     const yahooSymbols = { VOO: "VOO", NVDA: "NVDA", "0050": "0050.TW", "0056": "0056.TW", "00919": "00919.TW", "00631L": "00631L.TW" };
     const results = await Promise.allSettled(holdings.map(async (meta) => {
       const data = await fetchYahoo(yahooSymbols[meta.symbol]);
@@ -800,6 +849,29 @@
     return settings;
   }
 
+  async function updateQuotes(settings) {
+    const config = global.INVESTMENT_MARKET_CONFIG || {};
+    const endpoints = [];
+    const apiBaseUrl = String(config.apiBaseUrl || "").replace(/\/$/, "");
+    if (apiBaseUrl) endpoints.push({ url: `${apiBaseUrl}/market/refresh`, label: "即時後端更新" });
+    const fallbackUrl = String(config.fallbackUrl || "https://raw.githubusercontent.com/weichihung/investment-plan/main/market-data.json");
+    if (fallbackUrl) endpoints.push({ url: fallbackUrl, label: "GitHub 每日備援" });
+
+    for (const endpoint of endpoints) {
+      try {
+        const snapshot = await fetchMarketJson(endpoint.url);
+        return applyMarketSnapshot(settings, snapshot, endpoint.label);
+      } catch (_error) {
+        // Continue to the next independent source.
+      }
+    }
+    try {
+      return await updateQuotesDirect(settings);
+    } catch (_error) {
+      throw new Error("即時與備援報價目前都無法連線，已保留上次資料。");
+    }
+  }
+
   global.InvestmentCore = {
     DATA_VERSION, defaults, holdings, SYMBOLS, clone, loadSettings, saveSettings,
     formatTwd, formatUsd, formatNumber, formatPercent, portfolio, currentSummary,
@@ -807,3 +879,4 @@
     forecast, financialFreedom, updateQuotes
   };
 })(window);
+
