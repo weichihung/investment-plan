@@ -73,7 +73,7 @@ When the user requests `更新報價` or asks to update holdings plus quotes:
 - Refresh or estimate gross annual dividends from the latest available distribution data, then apply the 80% net factor to every security.
 - Use NVDA's latest official quarterly run rate for its annual estimate before applying the 80% factor.
 - The website update button must try the configured Cloudflare Worker first, the published GitHub `market-data.json` snapshot second and direct browser retrieval only as a final legacy fallback.
-- Taiwan closes in the Worker and scheduled snapshot use TWSE OpenAPI when available; US closes, USD/TWD and dividend events use the configured server-side provider.
+- The Worker uses TWSE OpenAPI for Taiwan closes, Nasdaq for US closes and ExchangeRate-API for USD/TWD. It carries dividend estimates from the scheduled GitHub snapshot, where distribution events are refreshed server-side.
 - Keep the Worker response at schema version 1 and include the exact date and source for every quote and exchange rate.
 - The scheduled workflow `.github/workflows/update-market-data.yml` refreshes the shared backup snapshot after completed market sessions.
 - Update user-provided deposits, units and cost basis exactly as stated.
@@ -102,4 +102,3 @@ When the user requests `更新報價` or asks to update holdings plus quotes:
 - Desktop: `https://weichihung.github.io/investment-plan/`
 - Mobile: `https://weichihung.github.io/investment-plan/mobile.html`
 - Publish from the `main` branch root through GitHub Pages.
-

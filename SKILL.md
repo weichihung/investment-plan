@@ -70,6 +70,8 @@ When the user requests updated quotes or dividends:
 9. For the website button, use this source order: Cloudflare Worker `/market/refresh`, GitHub raw `market-data.json`, then legacy direct Yahoo retrieval.
 10. Generate the shared snapshot with `node scripts/fetch-market.mjs --output market-data.json`; Taiwan prices use TWSE OpenAPI and all records carry exact dates and sources.
 11. Validate Worker market logic with `node --test worker/test/market.test.mjs` before deployment.
+12. The production Worker uses TWSE OpenAPI for Taiwan closes, Nasdaq for US closes and ExchangeRate-API for USD/TWD; dividend estimates come from the scheduled GitHub snapshot.
+13. If the scheduled primary refresh is rate-limited, `scripts/fetch-market.mjs` falls back to the production Worker and preserves the last valid dividend estimates.
 
 ## Quote Update Checklist
 
@@ -92,7 +94,7 @@ For requests like `更新報價` or `更新下述及更新報價`:
 ## Live Quote Deployment
 
 1. Keep the static frontend on GitHub Pages.
-2. Configure the deployed Worker URL in `shared/market-config.js`; never put API keys or GitHub tokens in this public file.
+2. Keep `https://investment-plan-market-api.weichihung.workers.dev` in `shared/market-config.js`; never put API keys or GitHub tokens in this public file.
 3. Deploy `worker/` with Wrangler only after Cloudflare authentication.
 4. Add the optional `MARKET_KV` binding when cross-device snapshot persistence is available.
 5. Publish `.github/workflows/update-market-data.yml` with contents-write permission so the raw GitHub backup remains current.
@@ -129,4 +131,3 @@ For requests like `更新報價` or `更新下述及更新報價`:
 5. Verify both URLs after deployment:
    - `https://weichihung.github.io/investment-plan/`
    - `https://weichihung.github.io/investment-plan/mobile.html`
-

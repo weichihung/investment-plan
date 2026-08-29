@@ -1,4 +1,4 @@
-import { buildMarketSnapshot } from "./market.js";
+import { buildWorkerMarketSnapshot } from "./market.js";
 
 const CACHE_SECONDS = 300;
 
@@ -30,7 +30,7 @@ async function freshSnapshot(request, env, ctx) {
   const cached = await cache.match(cacheKey);
   if (cached) return jsonResponse(request, env, await cached.json(), 200, `public, max-age=${CACHE_SECONDS}`);
 
-  const snapshot = await buildMarketSnapshot();
+  const snapshot = await buildWorkerMarketSnapshot();
   if (env.MARKET_KV) {
     ctx.waitUntil(env.MARKET_KV.put("latest", JSON.stringify(snapshot)));
   }
@@ -75,4 +75,3 @@ export default {
     }
   }
 };
-
