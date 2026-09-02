@@ -1,46 +1,46 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-01T01:22:21.696Z",
+  "generatedAt": "2026-09-02T00:26:32.482Z",
   "status": "complete",
   "quotes": {
     "VOO": {
-      "price": 704.89001465,
-      "date": "2026-08-31",
+      "price": 700.2800293,
+      "date": "2026-09-01",
       "annualDividend": 6.1344,
       "priceSource": "Yahoo Finance",
       "dividendSource": "Yahoo Finance events, net 80%"
     },
     "NVDA": {
-      "price": 220.77999878,
-      "date": "2026-08-31",
+      "price": 217.44000244,
+      "date": "2026-09-01",
       "annualDividend": 0.8,
       "priceSource": "Yahoo Finance",
       "dividendSource": "Yahoo Finance events, net 80%"
     },
     "0050": {
-      "price": 106.25,
-      "date": "2026-08-31",
+      "price": 108.45,
+      "date": "2026-09-01",
       "annualDividend": 1.28,
       "priceSource": "TWSE OpenAPI",
       "dividendSource": "Yahoo Finance events, net 80%"
     },
     "0056": {
-      "price": 54.6,
-      "date": "2026-08-31",
+      "price": 54.85,
+      "date": "2026-09-01",
       "annualDividend": 3.4304,
       "priceSource": "TWSE OpenAPI",
       "dividendSource": "Yahoo Finance events, net 80%"
     },
     "00919": {
-      "price": 31.96,
-      "date": "2026-08-31",
+      "price": 32.31,
+      "date": "2026-09-01",
       "annualDividend": 2.848,
       "priceSource": "TWSE OpenAPI",
       "dividendSource": "Yahoo Finance events, net 80%"
     },
     "00631L": {
-      "price": 35.82,
-      "date": "2026-08-31",
+      "price": 37.26,
+      "date": "2026-09-01",
       "annualDividend": 0,
       "priceSource": "TWSE OpenAPI",
       "dividendSource": "No distribution"
@@ -48,8 +48,8 @@
   },
   "fx": {
     "USD_TWD": {
-      "rate": 31.63500023,
-      "date": "2026-09-01",
+      "rate": 31.68400002,
+      "date": "2026-09-02",
       "source": "Yahoo Finance"
     }
   },
