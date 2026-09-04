@@ -6,7 +6,7 @@ The Worker provides the GitHub Pages site with browser-safe market data:
 - `GET /market/refresh`
 - `GET /market/latest`
 
-Taiwan closing prices come from TWSE OpenAPI, US closes come from Nasdaq and USD/TWD comes from ExchangeRate-API. Dividend estimates come from the daily GitHub snapshot, which refreshes distribution events server-side and stores annual dividends after the confirmed 20% reduction.
+Taiwan closing prices come from TWSE OpenAPI, US closes come from Nasdaq and USD/TWD comes from ExchangeRate-API. Dividend estimates come from the daily GitHub snapshot, which combines current-year official announcements with server-side distribution events and stores annual dividends after the confirmed 20% reduction.
 
 Production: `https://investment-plan-market-api.weichihung.workers.dev`
 

@@ -45,9 +45,12 @@ test("converts ROC market dates", () => {
 
 test("parses Nasdaq closing prices", () => {
   const quote = parseNasdaqInfo({
-    data: { primaryData: { lastSalePrice: "$707.24", lastTradeTimestamp: "Aug 27, 2026" } }
+    data: {
+      primaryData: { lastSalePrice: "$710.63", lastTradeTimestamp: "Sep 4, 2026 7:40 PM ET" },
+      secondaryData: { lastSalePrice: "$708.07", lastTradeTimestamp: "Closed at Sep 4, 2026 4:00 PM ET" }
+    }
   });
-  assert.deepEqual(quote, { price: 707.24, date: "2026-08-27", source: "Nasdaq" });
+  assert.deepEqual(quote, { price: 708.07, date: "2026-09-04", source: "Nasdaq" });
 });
 
 test("applies the 20 percent dividend reduction", () => {
@@ -66,6 +69,15 @@ test("builds one normalized snapshot and prefers TWSE closes", async () => {
         { Date: "1150828", Code: "00631L", ClosingPrice: "36.30" }
       ]);
     }
+    if (url.includes("api.nasdaq.com") && url.includes("VOO")) {
+      return response({ data: { secondaryData: { lastSalePrice: "$708.07", lastTradeTimestamp: "Closed at Sep 4, 2026 4:00 PM ET" } } });
+    }
+    if (url.includes("api.nasdaq.com") && url.includes("NVDA")) {
+      return response({ data: { secondaryData: { lastSalePrice: "$230.36", lastTradeTimestamp: "Closed at Sep 4, 2026 4:00 PM ET" } } });
+    }
+    if (url.includes("open.er-api.com")) {
+      return response({ rates: { TWD: 31.8 }, time_last_update_utc: "Fri, 04 Sep 2026 00:02:31 +0000" });
+    }
     const symbol = decodeURIComponent(new URL(url).pathname.split("/").pop());
     const data = {
       VOO: yahooPayload(708.75, [1, 2]),
@@ -82,8 +94,14 @@ test("builds one normalized snapshot and prefers TWSE closes", async () => {
   assert.equal(snapshot.status, "complete");
   assert.equal(snapshot.quotes["0050"].price, 106.95);
   assert.equal(snapshot.quotes["0050"].priceSource, "TWSE OpenAPI");
-  assert.equal(snapshot.quotes.NVDA.annualDividend, 0.032);
+  assert.equal(snapshot.quotes.VOO.price, 708.07);
+  assert.equal(snapshot.quotes.VOO.priceSource, "Nasdaq");
+  assert.equal(snapshot.quotes.VOO.annualDividend, 6.13536);
+  assert.equal(snapshot.quotes.NVDA.annualDividend, 0.8);
+  assert.equal(snapshot.quotes["0056"].annualDividend, 3.4304);
+  assert.equal(snapshot.quotes["00919"].annualDividend, 3.072);
   assert.equal(snapshot.fx.USD_TWD.rate, 31.8);
+  assert.equal(snapshot.fx.USD_TWD.source, "ExchangeRate-API");
 });
 
 test("builds the Worker snapshot from official quotes and the daily dividend baseline", async () => {

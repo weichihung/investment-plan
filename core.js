@@ -2,15 +2,15 @@
   "use strict";
 
   const STORAGE_KEY = "investment-plan-settings-v2";
-  const DATA_VERSION = 25;
+  const DATA_VERSION = 26;
   const DIVIDEND_NET_FACTOR = 0.8;
   const SYMBOLS = ["VOO", "NVDA", "0050", "0056", "00919", "00631L"];
 
   // BEGIN WORKBOOK IMPORT
   const WORKBOOK_DATA = Object.freeze({
     "sourceFile": "投資試算表_2026-2048.xlsx",
-    "sourceModifiedAt": "2026-08-28T00:24:25",
-    "sourceSha256": "21288c89ae16c36c548431cf2bf732aebbb304cd26809244a6d0fd92909f9ce0",
+    "sourceModifiedAt": "2026-09-04T23:32:25",
+    "sourceSha256": "e4fda279f7f8ad352396c928c30e00047404b47daf428ceaeb751e9b23cf9583",
     "settings": {
       "startYear": 2026,
       "startAge": 43,
@@ -18,7 +18,7 @@
       "autoRollFirstYearMonths": true,
       "firstYearMonths": 4,
       "firstYearDataMonth": 9,
-      "fxRate": 31.795,
+      "fxRate": 31.687211,
       "twPriceGrowth": 6,
       "usPriceGrowth": 6.5,
       "twDividendGrowth": 3,
@@ -30,8 +30,8 @@
       "fixedMonthly": 22000,
       "expenseInflation": 2.5,
       "annualSalaryMonths": 14,
-      "twdDeposit": 1337294,
-      "foreignDepositTwd": 133874,
+      "twdDeposit": 1380623,
+      "foreignDepositTwd": 133241,
       "bankMinimum": 650000,
       "carYear": 2030,
       "carPrice": 2000000,
@@ -45,49 +45,49 @@
       "homeLoanRate": 0,
       "homeLoanMonths": 0,
       "annualHomeCost": 0,
-      "updatedAt": "2026-08-29T09:00:11+08:00",
-      "quoteStatus": "Excel 附檔匯入（配息已折減 20%）",
+      "updatedAt": "2026-09-05T07:39:06+08:00",
+      "quoteStatus": "網路最新收盤價與官方配息（配息已折減 20%）",
       "quoteDates": {
-        "TW": "2026-08-28",
-        "US": "2026-08-28",
-        "FX": "2026-08-28"
+        "TW": "2026-09-04",
+        "US": "2026-09-04",
+        "FX": "2026-09-04"
       }
     },
     "holdingSettings": {
       "VOO": {
         "units": 18.01185,
         "cost": 578.158,
-        "price": 708.75,
-        "annualDividend": 5.9917
+        "price": 708.07,
+        "annualDividend": 6.13536
       },
       "NVDA": {
         "units": 116.9023,
         "cost": 152.306,
-        "price": 227.98,
-        "annualDividend": 0.032
+        "price": 230.36,
+        "annualDividend": 0.8
       },
       "0050": {
-        "units": 41.038,
-        "cost": 43.01,
-        "price": 106.05,
+        "units": 41.176,
+        "cost": 43.23,
+        "price": 107.9,
         "annualDividend": 1.28
       },
       "0056": {
         "units": 32,
         "cost": 31.03,
-        "price": 53.6,
-        "annualDividend": 3.2128
+        "price": 55.4,
+        "annualDividend": 3.4304
       },
       "00919": {
         "units": 51,
         "cost": 23.48,
-        "price": 31.31,
-        "annualDividend": 2.848
+        "price": 33.02,
+        "annualDividend": 3.072
       },
       "00631L": {
         "units": 0,
         "cost": 0,
-        "price": 0,
+        "price": 36.64,
         "annualDividend": 0
       }
     },
@@ -879,4 +879,3 @@
     forecast, financialFreedom, updateQuotes
   };
 })(window);
-

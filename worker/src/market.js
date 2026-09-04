@@ -2,11 +2,45 @@ const DIVIDEND_NET_FACTOR = 0.8;
 const MARKET_SNAPSHOT_URL = "https://raw.githubusercontent.com/weichihung/investment-plan/main/market-data.json";
 
 export const MARKET_DEFINITIONS = {
-  VOO: { yahoo: "VOO", market: "US", frequency: 4 },
-  NVDA: { yahoo: "NVDA", market: "US", frequency: 4, mode: "latestRunRate" },
-  "0050": { yahoo: "0050.TW", market: "TW", frequency: 2 },
-  "0056": { yahoo: "0056.TW", market: "TW", frequency: 4 },
-  "00919": { yahoo: "00919.TW", market: "TW", frequency: 4 },
+  VOO: {
+    yahoo: "VOO", market: "US", frequency: 4,
+    officialDividends: [
+      { amount: 1.8724, date: Date.UTC(2026, 2, 27) },
+      { amount: 1.9622, date: Date.UTC(2026, 5, 26) }
+    ],
+    dividendSource: "Vanguard distributions, net 80%"
+  },
+  NVDA: {
+    yahoo: "NVDA", market: "US", frequency: 4, mode: "latestRunRate",
+    officialDividends: [{ amount: 0.25, date: Date.UTC(2026, 5, 26) }],
+    dividendSource: "NVIDIA quarterly dividend run rate, net 80%"
+  },
+  "0050": {
+    yahoo: "0050.TW", market: "TW", frequency: 2,
+    officialDividends: [
+      { amount: 1, date: Date.UTC(2026, 0, 22) },
+      { amount: 0.6, date: Date.UTC(2026, 6, 21) }
+    ],
+    dividendSource: "TWSE distributions, net 80%"
+  },
+  "0056": {
+    yahoo: "0056.TW", market: "TW", frequency: 4,
+    officialDividends: [
+      { amount: 0.866, date: Date.UTC(2026, 0, 22) },
+      { amount: 1, date: Date.UTC(2026, 3, 23) },
+      { amount: 1.35, date: Date.UTC(2026, 6, 21) }
+    ],
+    dividendSource: "TWSE distributions, net 80%"
+  },
+  "00919": {
+    yahoo: "00919.TW", market: "TW", frequency: 4,
+    officialDividends: [
+      { amount: 0.78, date: Date.UTC(2026, 2, 17) },
+      { amount: 1, date: Date.UTC(2026, 5, 16) },
+      { amount: 1.1, date: Date.UTC(2026, 8, 16) }
+    ],
+    dividendSource: "Capital Investment Trust announcement, net 80%"
+  },
   "00631L": { yahoo: "00631L.TW", market: "TW", frequency: 0 }
 };
 
@@ -51,6 +85,14 @@ export function estimateNetAnnualDividend(dividends, frequency, mode, now = new 
   return rounded(grossAnnual * DIVIDEND_NET_FACTOR);
 }
 
+function selectedDividendEvents(definition, yahooDividends, now) {
+  const currentYear = now.getUTCFullYear();
+  const official = (definition.officialDividends || []).filter(
+    (item) => new Date(Number(item.date)).getUTCFullYear() === currentYear
+  );
+  return official.length ? official : yahooDividends;
+}
+
 export function parseYahooChart(payload) {
   const result = payload?.chart?.result?.[0];
   if (!result) throw new Error("Yahoo response did not contain chart data");
@@ -88,8 +130,12 @@ async function fetchTwse(fetchImpl) {
 
 export function parseNasdaqInfo(payload) {
   const primary = payload?.data?.primaryData;
-  const price = Number(String(primary?.lastSalePrice || "").replace(/[$,]/g, ""));
-  const dateMatch = String(primary?.lastTradeTimestamp || "").match(/^([A-Za-z]{3})\s+(\d{1,2}),\s+(\d{4})/);
+  const secondary = payload?.data?.secondaryData;
+  const quote = /^Closed at\s/i.test(String(secondary?.lastTradeTimestamp || ""))
+    ? secondary
+    : primary;
+  const price = Number(String(quote?.lastSalePrice || "").replace(/[$,]/g, ""));
+  const dateMatch = String(quote?.lastTradeTimestamp || "").match(/([A-Za-z]{3})\s+(\d{1,2}),\s+(\d{4})/);
   const monthIndex = dateMatch
     ? ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"].indexOf(dateMatch[1])
     : -1;
@@ -210,12 +256,19 @@ export async function buildWorkerMarketSnapshot({ fetchImpl = fetch, now = new D
 
 export async function buildMarketSnapshot({ fetchImpl = fetch, now = new Date() } = {}) {
   const symbols = Object.keys(MARKET_DEFINITIONS);
-  const [twseResult, ...yahooResults] = await Promise.allSettled([
+  const [twseResult, vooResult, nvdaResult, fxOfficialResult, ...yahooResults] = await Promise.allSettled([
     fetchTwse(fetchImpl),
+    fetchNasdaq(fetchImpl, "VOO", "etf"),
+    fetchNasdaq(fetchImpl, "NVDA", "stocks"),
+    fetchOpenExchangeRate(fetchImpl),
     ...symbols.map((symbol) => fetchYahoo(fetchImpl, MARKET_DEFINITIONS[symbol].yahoo)),
     fetchYahoo(fetchImpl, "TWD=X")
   ]);
   const twse = twseResult.status === "fulfilled" ? twseResult.value : {};
+  const usQuotes = {
+    VOO: vooResult.status === "fulfilled" ? vooResult.value : null,
+    NVDA: nvdaResult.status === "fulfilled" ? nvdaResult.value : null
+  };
   const yahooBySymbol = {};
   const failures = [];
 
@@ -226,15 +279,19 @@ export async function buildMarketSnapshot({ fetchImpl = fetch, now = new Date() 
   });
   const fxResult = yahooResults[symbols.length];
   const fxYahoo = fxResult?.status === "fulfilled" ? fxResult.value : null;
+  const fxOfficial = fxOfficialResult.status === "fulfilled" ? fxOfficialResult.value : null;
   const fxError = fxResult?.status === "rejected" ? fxResult.reason?.message : "Yahoo failed";
-  if (!fxYahoo) failures.push(`USD/TWD: ${fxError}`);
+  if (!fxOfficial && !fxYahoo) failures.push(`USD/TWD: ${fxError}`);
   if (twseResult.status === "rejected") failures.push(`TWSE: ${twseResult.reason?.message || "TWSE failed"}`);
+  if (vooResult.status === "rejected") failures.push(`VOO Nasdaq: ${vooResult.reason?.message || "Nasdaq failed"}`);
+  if (nvdaResult.status === "rejected") failures.push(`NVDA Nasdaq: ${nvdaResult.reason?.message || "Nasdaq failed"}`);
+  if (fxOfficialResult.status === "rejected") failures.push(`USD/TWD primary: ${fxOfficialResult.reason?.message || "exchange-rate service failed"}`);
 
   const quotes = {};
   symbols.forEach((symbol) => {
     const definition = MARKET_DEFINITIONS[symbol];
     const yahoo = yahooBySymbol[symbol];
-    const official = definition.market === "TW" ? twse[symbol] : null;
+    const official = definition.market === "TW" ? twse[symbol] : usQuotes[symbol];
     const priceSource = official || yahoo;
     if (!priceSource?.price) {
       failures.push(`${symbol}: no closing price`);
@@ -244,23 +301,31 @@ export async function buildMarketSnapshot({ fetchImpl = fetch, now = new Date() 
       price: priceSource.price,
       date: priceSource.date,
       annualDividend: definition.frequency
-        ? estimateNetAnnualDividend(yahoo?.dividends || [], definition.frequency, definition.mode, now)
+        ? estimateNetAnnualDividend(
+          selectedDividendEvents(definition, yahoo?.dividends || [], now),
+          definition.frequency,
+          definition.mode,
+          now
+        )
         : 0,
-      priceSource: official ? official.source : "Yahoo Finance",
-      dividendSource: definition.frequency ? "Yahoo Finance events, net 80%" : "No distribution"
+      priceSource: official?.source || "Yahoo Finance",
+      dividendSource: definition.frequency
+        ? definition.dividendSource || "Yahoo Finance events, net 80%"
+        : "No distribution"
     };
   });
 
-  if (!Object.keys(quotes).length || !fxYahoo?.price) {
+  if (!Object.keys(quotes).length || (!fxOfficial?.rate && !fxYahoo?.price)) {
     throw new Error(`Market snapshot unavailable: ${failures.join("; ")}`);
   }
+  const fx = fxOfficial || { rate: fxYahoo.price, date: fxYahoo.date, source: "Yahoo Finance" };
   return {
     schemaVersion: 1,
     generatedAt: now.toISOString(),
     status: Object.keys(quotes).length === symbols.length && !failures.length ? "complete" : "partial",
     quotes,
     fx: {
-      USD_TWD: { rate: fxYahoo.price, date: fxYahoo.date, source: "Yahoo Finance" }
+      USD_TWD: fx
     },
     failures
   };
