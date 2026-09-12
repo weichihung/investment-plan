@@ -28,6 +28,7 @@
   const percent = core.formatPercent;
   const signedMoney = (value) => `${value >= 0 ? "+" : "−"}${money(Math.abs(value))}`;
   const unitLabel = (item) => item.market === "TW" ? "張" : "股";
+  const hasHolding = (item) => Number(item.units) > 0;
   const nativeMoney = (item, value) => {
     const amount = new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 4 }).format(Number(value) || 0);
     return `${item.market === "US" ? "US$" : "NT$"}${amount}`;
@@ -235,14 +236,15 @@
 
   function renderPortfolio() {
     const { portfolio, summary } = calculated;
+    const visiblePortfolio = portfolio.filter(hasHolding);
     $("#portfolioSummary").innerHTML = [
       ["股票市值", summary.stockValue], ["投入成本", summary.cost], ["投資損益", summary.profit], ["預估年股利", summary.dividends]
     ].map(([label, value]) => `<div><span>${label}</span><strong class="${label === "投資損益" ? (value >= 0 ? "positive-text" : "negative-text") : ""}">${label === "投資損益" ? signedMoney(value) : money(value)}</strong></div>`).join("");
-    $("#portfolioRows").innerHTML = portfolio.map((item) => {
+    $("#portfolioRows").innerHTML = visiblePortfolio.map((item) => {
       const draft = holdingDraft[item.symbol] || item;
       const payout = item.payoutMonths.length ? item.payoutMonths.map((month) => `<i>${month}月</i>`).join("") : "—";
       return `<tr><td><strong>${item.symbol}</strong><small>${item.name}</small></td><td>${item.market}</td><td><input class="table-input" data-holding="${item.symbol}" data-field="cost" type="number" min="0" step="0.0001" value="${draft.cost}"></td><td>${nativeMoney(item, item.price)}</td><td><input class="table-input" data-holding="${item.symbol}" data-field="units" type="number" min="0" step="0.00001" value="${draft.units}"><small>${unitLabel(item)}</small></td><td>${money(item.marketValueTwd)}</td><td>${money(item.costTwd)}</td><td class="${item.profit >= 0 ? "positive-text" : "negative-text"}">${signedMoney(item.profit)}</td><td>${percent(item.profitRate)}</td><td>${money(item.dividendTwd)}</td><td>${percent(item.yieldRate, 2)}</td><td><strong>${percent(item.weight)}</strong></td><td><span class="month-badges">${payout}</span></td></tr>`;
-    }).join("");
+    }).join("") || '<tr><td colspan="13">目前沒有持股</td></tr>';
   }
 
   function renderPlan() {
@@ -281,9 +283,10 @@
 
   function renderHoldingsForecast() {
     const row = selectedRow();
+    const visibleSecurities = row.securities.filter(hasHolding);
     $("#holdingYearTotal").textContent = money(row.stockValue);
     $("#holdingYearTitle").textContent = `${row.year} 年 · ${row.age} 歲持股明細`;
-    $("#holdingForecastRows").innerHTML = row.securities.map((item) => `<tr><td><strong>${item.symbol}</strong><small>${item.name}</small></td><td class="${item.addedUnits < 0 ? "negative-text" : "positive-text"}">${item.addedUnits >= 0 ? "+" : ""}${number(item.addedUnits, item.market === "US" ? 4 : 3)} ${unitLabel(item)}</td><td>${number(item.units, item.market === "US" ? 4 : 3)} ${unitLabel(item)}</td><td>${nativeMoney(item, item.price)}</td><td>${money(item.marketValueTwd)}</td><td><strong>${percent(item.weight)}</strong></td><td>${money(item.dividendTwd)}</td><td class="${item.profit >= 0 ? "positive-text" : "negative-text"}">${signedMoney(item.profit)}</td></tr>`).join("");
+    $("#holdingForecastRows").innerHTML = visibleSecurities.map((item) => `<tr><td><strong>${item.symbol}</strong><small>${item.name}</small></td><td class="${item.addedUnits < 0 ? "negative-text" : "positive-text"}">${item.addedUnits >= 0 ? "+" : ""}${number(item.addedUnits, item.market === "US" ? 4 : 3)} ${unitLabel(item)}</td><td>${number(item.units, item.market === "US" ? 4 : 3)} ${unitLabel(item)}</td><td>${nativeMoney(item, item.price)}</td><td>${money(item.marketValueTwd)}</td><td><strong>${percent(item.weight)}</strong></td><td>${money(item.dividendTwd)}</td><td class="${item.profit >= 0 ? "positive-text" : "negative-text"}">${signedMoney(item.profit)}</td></tr>`).join("") || '<tr><td colspan="8">本年度沒有持股</td></tr>';
   }
 
   function renderDividends() {
@@ -301,7 +304,7 @@
     const row = selectedRow();
     if (currentPage === "overview") charts.assetTrend("#assetTrendChart", calculated.forecast, selectedYear, selectYear);
     if (currentPage === "freedom") charts.freedom("#freedomChart", calculated.freedom.rows, selectedYear, selectYear);
-    if (currentPage === "portfolio") charts.allocationDonut("#allocationChart", calculated.portfolio);
+    if (currentPage === "portfolio") charts.allocationDonut("#allocationChart", calculated.portfolio.filter(hasHolding));
     if (currentPage === "plan") charts.investment("#investmentChart", calculated.forecast);
     if (currentPage === "market") charts.priceProjection("#marketChart", calculated.market, marketSymbol, marketMetric);
     if (currentPage === "holdings") charts.holdingsValue("#holdingsChart", calculated.forecast);
