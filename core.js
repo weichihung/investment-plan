@@ -2,15 +2,15 @@
   "use strict";
 
   const STORAGE_KEY = "investment-plan-settings-v2";
-  const DATA_VERSION = 26;
+  const DATA_VERSION = 28;
   const DIVIDEND_NET_FACTOR = 0.8;
   const SYMBOLS = ["VOO", "NVDA", "0050", "0056", "00919", "00631L"];
 
   // BEGIN WORKBOOK IMPORT
   const WORKBOOK_DATA = Object.freeze({
     "sourceFile": "投資試算表_2026-2048.xlsx",
-    "sourceModifiedAt": "2026-09-04T23:32:25",
-    "sourceSha256": "e4fda279f7f8ad352396c928c30e00047404b47daf428ceaeb751e9b23cf9583",
+    "sourceModifiedAt": "2026-09-10T06:56:48",
+    "sourceSha256": "0aa1f7df6c706522d229f3518d01659f2cc0cc693fc74aaa6d640a3af7be6d2a",
     "settings": {
       "startYear": 2026,
       "startAge": 43,
@@ -18,7 +18,7 @@
       "autoRollFirstYearMonths": true,
       "firstYearMonths": 4,
       "firstYearDataMonth": 9,
-      "fxRate": 31.687211,
+      "fxRate": 31.535,
       "twPriceGrowth": 6,
       "usPriceGrowth": 6.5,
       "twDividendGrowth": 3,
@@ -30,8 +30,8 @@
       "fixedMonthly": 22000,
       "expenseInflation": 2.5,
       "annualSalaryMonths": 14,
-      "twdDeposit": 1380623,
-      "foreignDepositTwd": 133241,
+      "twdDeposit": 1347639,
+      "foreignDepositTwd": 126485,
       "bankMinimum": 650000,
       "carYear": 2030,
       "carPrice": 2000000,
@@ -45,43 +45,43 @@
       "homeLoanRate": 0,
       "homeLoanMonths": 0,
       "annualHomeCost": 0,
-      "updatedAt": "2026-09-05T07:39:06+08:00",
-      "quoteStatus": "網路最新收盤價與官方配息（配息已折減 20%）",
+      "updatedAt": "2026-09-12T09:20:28+08:00",
+      "quoteStatus": "Excel 附檔匯入（零值報價沿用上次有效值，配息已折減 20%）",
       "quoteDates": {
-        "TW": "2026-09-04",
-        "US": "2026-09-04",
-        "FX": "2026-09-04"
+        "TW": "2026-09-10",
+        "US": "2026-09-10",
+        "FX": "2026-09-10"
       }
     },
     "holdingSettings": {
       "VOO": {
         "units": 18.01185,
         "cost": 578.158,
-        "price": 708.07,
+        "price": 704.07,
         "annualDividend": 6.13536
       },
       "NVDA": {
-        "units": 116.9023,
-        "cost": 152.306,
-        "price": 230.36,
-        "annualDividend": 0.8
+        "units": 117.76015,
+        "cost": 152.895,
+        "price": 225.73,
+        "annualDividend": 0.544
       },
       "0050": {
-        "units": 41.176,
-        "cost": 43.23,
-        "price": 107.9,
+        "units": 41.312,
+        "cost": 43.45,
+        "price": 109.65,
         "annualDividend": 1.28
       },
       "0056": {
         "units": 32,
         "cost": 31.03,
-        "price": 55.4,
+        "price": 55.75,
         "annualDividend": 3.4304
       },
       "00919": {
         "units": 51,
         "cost": 23.48,
-        "price": 33.02,
+        "price": 32.58,
         "annualDividend": 3.072
       },
       "00631L": {
@@ -133,7 +133,7 @@
       },
       "2027": {
         "VOO": 200,
-        "NVDA": 600,
+        "NVDA": 400,
         "0050": 60000,
         "0056": 0,
         "00919": 0,
@@ -142,7 +142,7 @@
       "2028": {
         "VOO": 200,
         "NVDA": 250,
-        "0050": 20000,
+        "0050": 50000,
         "0056": 0,
         "00919": 0,
         "00631L": 0
@@ -156,8 +156,8 @@
         "00631L": 0
       },
       "2030": {
-        "VOO": 200,
-        "NVDA": 250,
+        "VOO": 0,
+        "NVDA": 0,
         "0050": 10000,
         "0056": 0,
         "00919": 0,
@@ -214,7 +214,7 @@
       "2037": {
         "VOO": 350,
         "NVDA": 300,
-        "0050": 50000,
+        "0050": 60000,
         "0056": 0,
         "00919": 0,
         "00631L": 0
@@ -222,7 +222,7 @@
       "2038": {
         "VOO": 350,
         "NVDA": 300,
-        "0050": 50000,
+        "0050": 60000,
         "0056": 0,
         "00919": 0,
         "00631L": 0
@@ -230,7 +230,7 @@
       "2039": {
         "VOO": 350,
         "NVDA": 300,
-        "0050": 50000,
+        "0050": 60000,
         "0056": 10000,
         "00919": 10000,
         "00631L": 0

@@ -212,6 +212,29 @@ def generated_block(data: dict) -> str:
     return f"  // BEGIN WORKBOOK IMPORT\n  const WORKBOOK_DATA = Object.freeze({indented.lstrip()});\n  // END WORKBOOK IMPORT"
 
 
+def preserve_valid_prices(root: Path, data: dict) -> dict[str, float]:
+    """Replace zero workbook quote placeholders with the last valid snapshot."""
+    snapshot_path = root / "market-data.json"
+    if not snapshot_path.is_file():
+        return {}
+
+    snapshot = json.loads(snapshot_path.read_text(encoding="utf-8-sig"))
+    quotes = snapshot.get("quotes") or {}
+    preserved = {}
+    for symbol in SYMBOLS:
+        imported = data["holdingSettings"][symbol]
+        if float(imported["price"] or 0) > 0:
+            continue
+        fallback = float((quotes.get(symbol) or {}).get("price") or 0)
+        if fallback > 0:
+            imported["price"] = compact(fallback)
+            preserved[symbol] = compact(fallback)
+
+    if preserved:
+        data["settings"]["quoteStatus"] = "Excel 附檔匯入（零值報價沿用上次有效值，配息已折減 20%）"
+    return preserved
+
+
 def rebuild_deploy(root: Path) -> None:
     deploy = root / "deploy"
     deploy.mkdir(exist_ok=True)
@@ -271,6 +294,7 @@ def main() -> int:
     root = Path(__file__).resolve().parents[1]
     workbook = resolve_workbook(args.workbook)
     data = read_workbook(workbook, args.quote_date)
+    preserved_prices = preserve_valid_prices(root, data)
     summary = {
         "workbook": str(workbook),
         "sourceModifiedAt": data["sourceModifiedAt"],
@@ -285,6 +309,7 @@ def main() -> int:
         },
         "holdings": data["holdingSettings"],
         "planYears": len(data["manualPlans"]),
+        "preservedPrices": preserved_prices,
         "mode": "apply" if args.apply else "preview",
     }
 
@@ -309,4 +334,3 @@ if __name__ == "__main__":
     except Exception as error:
         print(f"匯入失敗：{error}", file=sys.stderr)
         raise SystemExit(1)
-
