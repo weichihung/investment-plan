@@ -1,46 +1,46 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-18T00:43:13.529Z",
-  "status": "partial",
+  "generatedAt": "2026-09-19T00:32:01.448Z",
+  "status": "complete",
   "quotes": {
     "VOO": {
-      "price": 701.1,
-      "date": "2026-09-17",
+      "price": 701.82,
+      "date": "2026-09-18",
       "annualDividend": 6.13536,
       "priceSource": "Nasdaq",
       "dividendSource": "Vanguard distributions, net 80%"
     },
     "NVDA": {
-      "price": 219.34,
-      "date": "2026-09-17",
+      "price": 222.27,
+      "date": "2026-09-18",
       "annualDividend": 0.8,
       "priceSource": "Nasdaq",
       "dividendSource": "NVIDIA quarterly dividend run rate, net 80%"
     },
     "0050": {
-      "price": 108.05,
-      "date": "2026-09-17",
+      "price": 109.85,
+      "date": "2026-09-18",
       "annualDividend": 1.28,
       "priceSource": "TWSE OpenAPI",
       "dividendSource": "TWSE distributions, net 80%"
     },
     "0056": {
-      "price": 56.3,
-      "date": "2026-09-17",
+      "price": 56.85,
+      "date": "2026-09-18",
       "annualDividend": 3.4304,
       "priceSource": "TWSE OpenAPI",
       "dividendSource": "TWSE distributions, net 80%"
     },
     "00919": {
-      "price": 32.11,
-      "date": "2026-09-17",
+      "price": 31.96,
+      "date": "2026-09-18",
       "annualDividend": 3.072,
       "priceSource": "TWSE OpenAPI",
       "dividendSource": "Capital Investment Trust announcement, net 80%"
     },
     "00631L": {
-      "price": 36.41,
-      "date": "2026-09-17",
+      "price": 37.65,
+      "date": "2026-09-18",
       "annualDividend": 0,
       "priceSource": "TWSE OpenAPI",
       "dividendSource": "No distribution"
@@ -48,12 +48,10 @@
   },
   "fx": {
     "USD_TWD": {
-      "rate": 31.863639,
-      "date": "2026-09-18",
+      "rate": 31.834145,
+      "date": "2026-09-19",
       "source": "ExchangeRate-API"
     }
   },
-  "failures": [
-    "0050: https://query1.finance.yahoo.com/v8/finance/chart/0050.TW?range=1y&interval=1d&events=div returned 429"
-  ]
+  "failures": []
 }
