@@ -103,6 +103,7 @@ def read_workbook(path: Path, quote_date: str | None) -> dict:
         raise ValueError("設定!C24 首年計入月數必須介於 0 到 12。")
     first_year_data_month = 13 - first_year_months if first_year_months else 12
     fx_rate = setting("C11", "美元匯率")
+    foreign_deposit_twd = setting("C29", "外幣存款")
 
     source_modified = formulas.properties.modified
     if source_modified is None:
@@ -130,7 +131,8 @@ def read_workbook(path: Path, quote_date: str | None) -> dict:
         "expenseInflation": compact(setting("C23", "支出年成長率") * 100),
         "annualSalaryMonths": compact(setting("C25", "年薪月數")),
         "twdDeposit": compact(setting("C28", "台幣存款")),
-        "foreignDepositTwd": compact(setting("C29", "外幣存款")),
+        "foreignDepositUsd": compact(foreign_deposit_twd / fx_rate),
+        "foreignDepositTwd": compact(foreign_deposit_twd),
         "bankMinimum": compact(setting("C31", "銀行存款年底下限")),
         "carYear": compact(setting("C34", "購車年份")),
         "carPrice": compact(setting("C35", "購車總價")),

@@ -10,4 +10,3 @@ ALLOWED_ORIGINS = "https://weichihung.github.io"
 # [[kv_namespaces]]
 # binding = "MARKET_KV"
 # id = "<created namespace id>"
-

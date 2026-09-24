@@ -37,6 +37,7 @@ test("applies a normalized remote market snapshot", async () => {
   assert.equal(settings.holdingSettings.VOO.price, 710);
   assert.equal(settings.holdingSettings.NVDA.annualDividend, 0.8);
   assert.equal(settings.quoteDates.TW, "2026-08-29");
+  assert.equal(settings.foreignDepositTwd, settings.foreignDepositUsd * 31.7);
   assert.match(settings.quoteStatus, /GitHub 每日備援/);
   assert.ok(saved);
 });
@@ -49,4 +50,3 @@ test("forecast remains finite after the quote integration", () => {
     .every(Number.isFinite)));
   assert.equal(rows.find((row) => row.year === 2030).stockSales, 0);
 });
-

@@ -38,6 +38,7 @@ description: Maintain and extend this personal investment planning website, incl
 - Display Taiwan holdings in lots of 1,000 shares and US holdings in shares.
 - Roll the 2026 remaining salary, expense and investment months forward automatically from the browser date.
 - Persist edited holding units and cost basis in `holdingSettings` only after an explicit save action.
+- Store foreign deposits as their native USD principal and convert them to TWD with `fxRate` for cash and asset totals. A quote refresh must revalue the TWD equivalent without changing the USD amount.
 
 ## Excel Import
 
@@ -78,6 +79,7 @@ When the user requests updated quotes or dividends:
 For requests like `更新報價` or `更新下述及更新報價`:
 
 1. Apply user-provided deposits, holding units and cost basis exactly.
+   If the foreign deposit is supplied in USD, preserve the USD principal exactly and derive its TWD value from the refreshed exchange rate.
 2. Fetch latest close prices, dividend data and USD/TWD.
 3. Apply the latest dividend estimates using the 80% net factor, with NVDA based on its latest official quarterly run rate.
 4. Update `settingsDefaults` in `shared/core.js`.

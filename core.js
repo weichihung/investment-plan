@@ -2,7 +2,7 @@
   "use strict";
 
   const STORAGE_KEY = "investment-plan-settings-v2";
-  const DATA_VERSION = 28;
+  const DATA_VERSION = 29;
   const DIVIDEND_NET_FACTOR = 0.8;
   const SYMBOLS = ["VOO", "NVDA", "0050", "0056", "00919", "00631L"];
 
@@ -18,7 +18,7 @@
       "autoRollFirstYearMonths": true,
       "firstYearMonths": 4,
       "firstYearDataMonth": 9,
-      "fxRate": 31.535,
+      "fxRate": 31.784395,
       "twPriceGrowth": 6,
       "usPriceGrowth": 6.5,
       "twDividendGrowth": 3,
@@ -30,8 +30,9 @@
       "fixedMonthly": 22000,
       "expenseInflation": 2.5,
       "annualSalaryMonths": 14,
-      "twdDeposit": 1347639,
-      "foreignDepositTwd": 126485,
+      "twdDeposit": 1309921,
+      "foreignDepositUsd": 11713,
+      "foreignDepositTwd": 372290.618635,
       "bankMinimum": 650000,
       "carYear": 2030,
       "carPrice": 2000000,
@@ -45,49 +46,49 @@
       "homeLoanRate": 0,
       "homeLoanMonths": 0,
       "annualHomeCost": 0,
-      "updatedAt": "2026-09-12T09:20:28+08:00",
-      "quoteStatus": "Excel 附檔匯入（零值報價沿用上次有效值，配息已折減 20%）",
+      "updatedAt": "2026-09-24T20:28:13+08:00",
+      "quoteStatus": "最新收盤價、匯率與配息資料（配息已折減 20%）",
       "quoteDates": {
-        "TW": "2026-09-10",
-        "US": "2026-09-10",
-        "FX": "2026-09-10"
+        "TW": "2026-09-23",
+        "US": "2026-09-23",
+        "FX": "2026-09-24"
       }
     },
     "holdingSettings": {
       "VOO": {
-        "units": 18.01185,
-        "cost": 578.158,
-        "price": 704.07,
+        "units": 18.15494,
+        "cost": 579.115,
+        "price": 707.6,
         "annualDividend": 6.13536
       },
       "NVDA": {
-        "units": 117.76015,
-        "cost": 152.895,
-        "price": 225.73,
-        "annualDividend": 0.544
+        "units": 118.69705,
+        "cost": 153.374,
+        "price": 225.51,
+        "annualDividend": 0.8
       },
       "0050": {
-        "units": 41.312,
-        "cost": 43.45,
-        "price": 109.65,
+        "units": 41.452,
+        "cost": 43.67,
+        "price": 112.45,
         "annualDividend": 1.28
       },
       "0056": {
         "units": 32,
         "cost": 31.03,
-        "price": 55.75,
+        "price": 56.6,
         "annualDividend": 3.4304
       },
       "00919": {
         "units": 51,
         "cost": 23.48,
-        "price": 32.58,
+        "price": 32.06,
         "annualDividend": 3.072
       },
       "00631L": {
         "units": 0,
         "cost": 0,
-        "price": 36.64,
+        "price": 38.99,
         "annualDividend": 0
       }
     },
@@ -341,7 +342,7 @@
 
   function hydrateSettings(saved) {
     if (!saved || Number(saved.dataVersion) !== DATA_VERSION) return clone(defaults);
-    return {
+    const hydrated = {
       ...clone(defaults),
       ...saved,
       dataVersion: DATA_VERSION,
@@ -352,6 +353,11 @@
       ])),
       manualPlans: { ...clone(defaults.manualPlans), ...(saved.manualPlans || {}) }
     };
+    if (!Number.isFinite(Number(hydrated.foreignDepositUsd))) {
+      hydrated.foreignDepositUsd = Number(hydrated.foreignDepositTwd || 0) / Number(hydrated.fxRate || defaults.fxRate);
+    }
+    hydrated.foreignDepositTwd = foreignDepositValueTwd(hydrated);
+    return hydrated;
   }
 
   function loadSettings() {
@@ -363,6 +369,7 @@
   }
 
   function saveSettings(settings) {
+    settings.foreignDepositTwd = foreignDepositValueTwd(settings);
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...settings, dataVersion: DATA_VERSION }));
   }
 
@@ -394,6 +401,12 @@
     return nativeToTwd(meta, price * meta.unitSize, fx);
   }
 
+  function foreignDepositValueTwd(settings) {
+    const usd = Number(settings.foreignDepositUsd);
+    if (Number.isFinite(usd)) return usd * Number(settings.fxRate || defaults.fxRate);
+    return Number(settings.foreignDepositTwd) || 0;
+  }
+
   function portfolio(settings) {
     const fx = Number(settings.fxRate) || defaults.fxRate;
     const items = holdings.map((meta) => {
@@ -419,7 +432,7 @@
 
   function currentSummary(settings) {
     const items = portfolio(settings);
-    const cash = Number(settings.twdDeposit) + Number(settings.foreignDepositTwd);
+    const cash = Number(settings.twdDeposit) + foreignDepositValueTwd(settings);
     const twStocks = items.filter((item) => item.market === "TW").reduce((sum, item) => sum + item.marketValueTwd, 0);
     const usStocks = items.filter((item) => item.market === "US").reduce((sum, item) => sum + item.marketValueTwd, 0);
     const dividends = items.reduce((sum, item) => sum + item.dividendTwd, 0);
@@ -875,7 +888,7 @@
   global.InvestmentCore = {
     DATA_VERSION, defaults, holdings, SYMBOLS, clone, loadSettings, saveSettings,
     formatTwd, formatUsd, formatNumber, formatPercent, portfolio, currentSummary,
-    effectiveFirstYearMonths, loanDetails, projectedMarket, priceDividendProjection,
+    foreignDepositValueTwd, effectiveFirstYearMonths, loanDetails, projectedMarket, priceDividendProjection,
     forecast, financialFreedom, updateQuotes
   };
 })(window);

@@ -7,4 +7,3 @@
     "market:test": "node --test worker/test/market.test.mjs test/core-market.test.cjs"
   }
 }
-

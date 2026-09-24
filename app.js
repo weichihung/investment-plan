@@ -83,7 +83,7 @@
             <label>薪資收入<input name="monthlySalary" type="number" min="0" step="1000"></label><label>薪資年成長 %<input name="salaryGrowth" type="number" step="0.1"></label><label>孝親<input name="familyMonthly" type="number" min="0" step="1000"></label><label>特別預算／享樂<input name="leisureMonthly" type="number" min="0" step="1000"></label><label>固定開銷<input name="fixedMonthly" type="number" min="0" step="1000"></label><label>支出通膨 %<input name="expenseInflation" type="number" step="0.1"></label><label>完整年度年薪月數<input name="annualSalaryMonths" type="number" min="0" step="0.5"></label>
           </div></fieldset>
           <fieldset class="setting-card"><legend><b>四</b>銀行存款</legend><div class="field-grid">
-            <label>台幣存款<input name="twdDeposit" type="number" min="0" step="1000"></label><label>外幣存款（折台幣）<input name="foreignDepositTwd" type="number" min="0" step="1000"></label><label>銀行存款年底下限<input name="bankMinimum" type="number" min="0" step="10000"></label><label>60 歲前現金目標<input name="cashTargetBefore61" type="number" min="0" step="10000"></label><label>61 歲後現金目標<input name="cashTargetAfter61" type="number" min="0" step="10000"></label>
+            <label>台幣存款<input name="twdDeposit" type="number" min="0" step="1000"></label><label>外幣存款（USD）<input name="foreignDepositUsd" type="number" min="0" step="1"></label><label>銀行存款年底下限<input name="bankMinimum" type="number" min="0" step="10000"></label><label>60 歲前現金目標<input name="cashTargetBefore61" type="number" min="0" step="10000"></label><label>61 歲後現金目標<input name="cashTargetAfter61" type="number" min="0" step="10000"></label>
           </div><div class="derived-line"><span>銀行期初合計</span><strong id="bankTotal">—</strong></div></fieldset>
           <fieldset class="setting-card"><legend><b>五</b>購車與車貸</legend><div class="field-grid">
             <label>購車年份<input name="carYear" type="number" min="0" max="2100"></label><label>購車總價<input name="carPrice" type="number" min="0" step="10000"></label><label>頭期款比例 %<input name="carDownPaymentRate" type="number" min="0" max="100" step="1"></label><label>貸款年利率 %<input name="carLoanRate" type="number" min="0" step="0.1"></label><label>貸款期數（月）<input name="carLoanMonths" type="number" min="0"></label><label>車保養＋保險／年<input name="annualVehicleCost" type="number" min="0" step="1000"></label>
@@ -221,7 +221,7 @@
     const firstMonthsInput = $("#settingsForm [name='firstYearMonths']");
     firstMonthsInput.disabled = Boolean(settings.autoRollFirstYearMonths);
     $("#effectiveMonths").textContent = `${core.effectiveFirstYearMonths(settings)} 個月`;
-    $("#bankTotal").textContent = money(Number(settings.twdDeposit) + Number(settings.foreignDepositTwd));
+    $("#bankTotal").textContent = money(Number(settings.twdDeposit) + core.foreignDepositValueTwd(settings));
     const car = core.loanDetails(settings.carPrice, settings.carDownPaymentRate, settings.carLoanRate, settings.carLoanMonths);
     $("#carDownPayment").textContent = money(car.downPayment);
     $("#carPrincipal").textContent = money(car.principal);

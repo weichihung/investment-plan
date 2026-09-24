@@ -100,4 +100,3 @@ Invoke-GitHubJson -Endpoint "repos/$repository/git/refs/heads/$branch" -Method "
 } | Out-Null
 
 Write-Output "published $($files.Count) files in commit $($commit.sha)"
-
