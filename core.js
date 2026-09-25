@@ -2,23 +2,23 @@
   "use strict";
 
   const STORAGE_KEY = "investment-plan-settings-v2";
-  const DATA_VERSION = 29;
+  const DATA_VERSION = 30;
   const DIVIDEND_NET_FACTOR = 0.8;
   const SYMBOLS = ["VOO", "NVDA", "0050", "0056", "00919", "00631L"];
 
   // BEGIN WORKBOOK IMPORT
   const WORKBOOK_DATA = Object.freeze({
     "sourceFile": "投資試算表_2026-2048.xlsx",
-    "sourceModifiedAt": "2026-09-10T06:56:48",
-    "sourceSha256": "0aa1f7df6c706522d229f3518d01659f2cc0cc693fc74aaa6d640a3af7be6d2a",
+    "sourceModifiedAt": "2026-09-25T01:59:32",
+    "sourceSha256": "c92f194cda7437b705299b43e02fe01a5d4cc680cf62322bf10c0f932edd990b",
     "settings": {
       "startYear": 2026,
       "startAge": 43,
       "endAge": 65,
       "autoRollFirstYearMonths": true,
-      "firstYearMonths": 4,
-      "firstYearDataMonth": 9,
-      "fxRate": 31.784395,
+      "firstYearMonths": 3,
+      "firstYearDataMonth": 10,
+      "fxRate": 31.825346,
       "twPriceGrowth": 6,
       "usPriceGrowth": 6.5,
       "twDividendGrowth": 3,
@@ -31,14 +31,14 @@
       "expenseInflation": 2.5,
       "annualSalaryMonths": 14,
       "twdDeposit": 1309921,
-      "foreignDepositUsd": 11713,
-      "foreignDepositTwd": 372290.618635,
+      "foreignDepositUsd": 11660.08475906,
+      "foreignDepositTwd": 371086.23184641,
       "bankMinimum": 650000,
       "carYear": 2030,
       "carPrice": 2000000,
-      "carDownPaymentRate": 50,
-      "carLoanRate": 0,
-      "carLoanMonths": 40,
+      "carDownPaymentRate": 40,
+      "carLoanRate": 1.6,
+      "carLoanMonths": 60,
       "annualVehicleCost": 100000,
       "homeYear": 0,
       "homePrice": 0,
@@ -46,49 +46,49 @@
       "homeLoanRate": 0,
       "homeLoanMonths": 0,
       "annualHomeCost": 0,
-      "updatedAt": "2026-09-24T20:28:13+08:00",
-      "quoteStatus": "最新收盤價、匯率與配息資料（配息已折減 20%）",
+      "updatedAt": "2026-09-25T10:02:32+08:00",
+      "quoteStatus": "附檔數值與最新收盤價、匯率及配息（配息已折減 20%）",
       "quoteDates": {
-        "TW": "2026-09-23",
-        "US": "2026-09-23",
-        "FX": "2026-09-24"
+        "TW": "2026-09-24",
+        "US": "2026-09-24",
+        "FX": "2026-09-25"
       }
     },
     "holdingSettings": {
       "VOO": {
         "units": 18.15494,
         "cost": 579.115,
-        "price": 707.6,
+        "price": 706.99,
         "annualDividend": 6.13536
       },
       "NVDA": {
         "units": 118.69705,
-        "cost": 153.374,
-        "price": 225.51,
+        "cost": 153.37441,
+        "price": 224.58,
         "annualDividend": 0.8
       },
       "0050": {
-        "units": 41.452,
-        "cost": 43.67,
-        "price": 112.45,
+        "units": 41.585,
+        "cost": 43.89,
+        "price": 112.4,
         "annualDividend": 1.28
       },
       "0056": {
         "units": 32,
         "cost": 31.03,
-        "price": 56.6,
+        "price": 56.65,
         "annualDividend": 3.4304
       },
       "00919": {
         "units": 51,
         "cost": 23.48,
-        "price": 32.06,
+        "price": 31.83,
         "annualDividend": 3.072
       },
       "00631L": {
         "units": 0,
         "cost": 0,
-        "price": 38.99,
+        "price": 38.87,
         "annualDividend": 0
       }
     },
@@ -143,7 +143,7 @@
       "2028": {
         "VOO": 200,
         "NVDA": 250,
-        "0050": 50000,
+        "0050": 60000,
         "0056": 0,
         "00919": 0,
         "00631L": 0
@@ -151,28 +151,12 @@
       "2029": {
         "VOO": 200,
         "NVDA": 250,
-        "0050": 10000,
+        "0050": 20000,
         "0056": 0,
         "00919": 0,
         "00631L": 0
       },
       "2030": {
-        "VOO": 0,
-        "NVDA": 0,
-        "0050": 10000,
-        "0056": 0,
-        "00919": 0,
-        "00631L": 0
-      },
-      "2031": {
-        "VOO": 200,
-        "NVDA": 250,
-        "0050": 10000,
-        "0056": 0,
-        "00919": 0,
-        "00631L": 0
-      },
-      "2032": {
         "VOO": 200,
         "NVDA": 250,
         "0050": 15000,
@@ -180,10 +164,26 @@
         "00919": 0,
         "00631L": 0
       },
+      "2031": {
+        "VOO": 200,
+        "NVDA": 250,
+        "0050": 20000,
+        "0056": 0,
+        "00919": 0,
+        "00631L": 0
+      },
+      "2032": {
+        "VOO": 200,
+        "NVDA": 250,
+        "0050": 20000,
+        "0056": 0,
+        "00919": 0,
+        "00631L": 0
+      },
       "2033": {
         "VOO": 200,
         "NVDA": 250,
-        "0050": 30000,
+        "0050": 20000,
         "0056": 0,
         "00919": 0,
         "00631L": 0
@@ -191,7 +191,7 @@
       "2034": {
         "VOO": 350,
         "NVDA": 300,
-        "0050": 50000,
+        "0050": 40000,
         "0056": 0,
         "00919": 0,
         "00631L": 0
@@ -215,7 +215,7 @@
       "2037": {
         "VOO": 350,
         "NVDA": 300,
-        "0050": 60000,
+        "0050": 50000,
         "0056": 0,
         "00919": 0,
         "00631L": 0
@@ -223,7 +223,7 @@
       "2038": {
         "VOO": 350,
         "NVDA": 300,
-        "0050": 60000,
+        "0050": 50000,
         "0056": 0,
         "00919": 0,
         "00631L": 0
@@ -231,7 +231,7 @@
       "2039": {
         "VOO": 350,
         "NVDA": 300,
-        "0050": 60000,
+        "0050": 50000,
         "0056": 10000,
         "00919": 10000,
         "00631L": 0
