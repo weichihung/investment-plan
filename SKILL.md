@@ -68,7 +68,7 @@ When the user requests updated quotes or dividends:
 6. For NVDA, annualize the latest official quarterly dividend before applying the 20% reduction; do not average a transition year's old and new quarterly rates.
 7. Preserve the last valid values if a remote update fails.
 8. Never label cost basis as latest price.
-9. For the website button, compare Cloudflare Worker `/market/refresh` with GitHub raw `market-data.json` per quote date; use direct Yahoo retrieval only when both primary sources fail.
+9. For the website button, compare Cloudflare Worker `/market/refresh` with GitHub raw `market-data.json` per quote date; use the GitHub completed-close snapshot for same-date quote ties, but the newer update for same-date FX ties. Use direct Yahoo retrieval only when both primary sources fail.
 10. Generate the shared snapshot with `node scripts/fetch-market.mjs --output market-data.json`; Taiwan prices compare TWSE OpenAPI with TWSE monthly daily closes and use the newer valid date. All records carry exact dates and sources.
 11. Validate Worker market logic with `node --test worker/test/market.test.mjs` before deployment.
 12. The production Worker compares TWSE OpenAPI with TWSE monthly daily closes for Taiwan prices, uses Nasdaq for US closes and ExchangeRate-API for USD/TWD; dividend estimates come from the scheduled GitHub snapshot.

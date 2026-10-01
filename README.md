@@ -43,7 +43,7 @@ python scripts/import-workbook.py "C:\路徑\投資試算表_2026-2048.xlsx" --a
 
 ## 網站即時更新報價
 
-「更新報價」按鈕比對兩個主要來源，逐檔使用日期較新的資料：
+「更新報價」按鈕比對兩個主要來源，逐檔使用日期較新的資料；同日期股票報價以已完成收盤的 GitHub 快照為準，匯率則採較新更新：
 
 1. Cloudflare Worker 即時抓取並快取市場資料。
 2. GitHub Actions 每日產生的 `market-data.json` 備援快照。

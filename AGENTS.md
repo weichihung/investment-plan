@@ -74,7 +74,7 @@ When the user requests `更新報價` or asks to update holdings plus quotes:
 - Refresh USD/TWD using the latest available market rate.
 - Refresh or estimate gross annual dividends from the latest available distribution data, then apply the 80% net factor to every security.
 - Use NVDA's latest official quarterly run rate for its annual estimate before applying the 80% factor.
-- The website update button must compare the configured Cloudflare Worker with the published GitHub `market-data.json` snapshot per quote date; use direct browser retrieval only if both primary sources fail.
+- The website update button must compare the configured Cloudflare Worker with the published GitHub `market-data.json` snapshot per quote date; use the GitHub completed-close snapshot for same-date stock quotes and the newer update for same-date FX rates. Use direct browser retrieval only if both primary sources fail.
 - The Worker compares TWSE OpenAPI with TWSE monthly daily closes and uses the newer Taiwan close; Nasdaq supplies US closes and ExchangeRate-API supplies USD/TWD. Dividend estimates come from the scheduled GitHub snapshot, where distribution events are refreshed server-side.
 - Keep the Worker response at schema version 1 and include the exact date and source for every quote and exchange rate.
 - The scheduled workflow `.github/workflows/update-market-data.yml` refreshes the shared backup snapshot after completed market sessions.

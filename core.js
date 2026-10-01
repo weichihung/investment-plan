@@ -881,14 +881,17 @@
     }));
     const available = results.filter(Boolean);
     if (available.length) {
-      const newest = (getRecord, isValid) => available
-        .map(({ snapshot }) => ({ record: getRecord(snapshot), generatedAt: snapshot.generatedAt || "" }))
+      const newest = (getRecord, isValid, preferSnapshotOnTie = false) => available
+        .map(({ snapshot }, sourceIndex) => ({
+          record: getRecord(snapshot), generatedAt: snapshot.generatedAt || "", sourceIndex
+        }))
         .filter(({ record }) => record && isValid(record))
         .sort((a, b) => String(b.record.date || "").localeCompare(String(a.record.date || ""))
-          || b.generatedAt.localeCompare(a.generatedAt))[0]?.record;
+          || (preferSnapshotOnTie ? b.sourceIndex - a.sourceIndex : b.generatedAt.localeCompare(a.generatedAt)))[0]?.record;
       const quotes = Object.fromEntries(holdings.map((meta) => [meta.symbol, newest(
         (snapshot) => snapshot.quotes[meta.symbol],
-        (quote) => validMarketNumber(quote.price) && Number(quote.price) > 0
+        (quote) => validMarketNumber(quote.price) && Number(quote.price) > 0,
+        true
       )]).filter(([, quote]) => quote));
       const fx = newest(
         (snapshot) => snapshot.fx?.USD_TWD,
