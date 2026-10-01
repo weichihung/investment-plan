@@ -26,7 +26,7 @@ description: Maintain and extend this personal investment planning website, incl
 ## Financial Rules
 
 - Start planning in 2026 at age 43 and use the imported workbook's ending age.
-- Use the workbook's first-year remaining-month count; the current baseline is four months from September 2026 and rolls down automatically in later months.
+- Use the workbook's first-year remaining-month count; the current baseline is three months from October 2026 and rolls down automatically in later months.
 - Use 14 salary months from 2027 onward.
 - Stop salary income before age 65.
 - Use the workbook's market assumptions and planning horizon; the current import uses 6% Taiwan price growth, 6.5% US price growth and runs through age 65.
@@ -68,10 +68,10 @@ When the user requests updated quotes or dividends:
 6. For NVDA, annualize the latest official quarterly dividend before applying the 20% reduction; do not average a transition year's old and new quarterly rates.
 7. Preserve the last valid values if a remote update fails.
 8. Never label cost basis as latest price.
-9. For the website button, use this source order: Cloudflare Worker `/market/refresh`, GitHub raw `market-data.json`, then legacy direct Yahoo retrieval.
-10. Generate the shared snapshot with `node scripts/fetch-market.mjs --output market-data.json`; Taiwan prices use TWSE OpenAPI and all records carry exact dates and sources.
+9. For the website button, compare Cloudflare Worker `/market/refresh` with GitHub raw `market-data.json` per quote date; use direct Yahoo retrieval only when both primary sources fail.
+10. Generate the shared snapshot with `node scripts/fetch-market.mjs --output market-data.json`; Taiwan prices compare TWSE OpenAPI with TWSE monthly daily closes and use the newer valid date. All records carry exact dates and sources.
 11. Validate Worker market logic with `node --test worker/test/market.test.mjs` before deployment.
-12. The production Worker uses TWSE OpenAPI for Taiwan closes, Nasdaq for US closes and ExchangeRate-API for USD/TWD; dividend estimates come from the scheduled GitHub snapshot.
+12. The production Worker compares TWSE OpenAPI with TWSE monthly daily closes for Taiwan prices, uses Nasdaq for US closes and ExchangeRate-API for USD/TWD; dividend estimates come from the scheduled GitHub snapshot.
 13. If the scheduled primary refresh is rate-limited, `scripts/fetch-market.mjs` falls back to the production Worker and preserves the last valid dividend estimates.
 
 ## Quote Update Checklist

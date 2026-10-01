@@ -104,6 +104,40 @@ test("builds one normalized snapshot and prefers TWSE closes", async () => {
   assert.equal(snapshot.fx.USD_TWD.source, "ExchangeRate-API");
 });
 
+test("includes newly announced distributions in the October annual estimate", async () => {
+  const fakeFetch = async (url) => {
+    if (url.includes("exchangeReport/STOCK_DAY?")) {
+      const symbol = new URL(url).searchParams.get("stockNo");
+      const closes = { "0050": "112.90", "0056": "56.85", "00919": "31.63", "00631L": "39.62" };
+      return response({ stat: "OK", data: [["115/10/01", "", "", "", "", "", closes[symbol]]] });
+    }
+    if (url.includes("openapi.twse.com.tw")) {
+      return response([
+        { Date: "1150930", Code: "0050", ClosingPrice: "112.05" },
+        { Date: "1150930", Code: "0056", ClosingPrice: "56.95" },
+        { Date: "1150930", Code: "00919", ClosingPrice: "31.88" },
+        { Date: "1150930", Code: "00631L", ClosingPrice: "38.99" }
+      ]);
+    }
+    if (url.includes("api.nasdaq.com")) {
+      return response({ data: { secondaryData: {
+        lastSalePrice: "$700.86", lastTradeTimestamp: "Closed at Sep 30, 2026 4:00 PM ET"
+      } } });
+    }
+    if (url.includes("open.er-api.com")) {
+      return response({ rates: { TWD: 31.9 }, time_last_update_utc: "Thu, 01 Oct 2026 00:02:31 +0000" });
+    }
+    return response(yahooPayload(100));
+  };
+  const snapshot = await buildMarketSnapshot({ fetchImpl: fakeFetch, now: new Date("2026-10-01T10:00:00Z") });
+  assert.equal(snapshot.quotes.VOO.annualDividend, 6.03434667);
+  assert.equal(snapshot.quotes["0056"].annualDividend, 3.9488);
+  assert.equal(snapshot.quotes["0050"].price, 112.90);
+  assert.equal(snapshot.quotes["0050"].date, "2026-10-01");
+  assert.equal(snapshot.quotes["0056"].price, 56.85);
+  assert.equal(snapshot.quotes["0056"].priceSource, "TWSE STOCK_DAY");
+});
+
 test("builds the Worker snapshot from official quotes and the daily dividend baseline", async () => {
   const baseline = {
     schemaVersion: 1,

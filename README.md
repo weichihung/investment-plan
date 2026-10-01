@@ -43,13 +43,13 @@ python scripts/import-workbook.py "C:\路徑\投資試算表_2026-2048.xlsx" --a
 
 ## 網站即時更新報價
 
-「更新報價」按鈕依序使用三層來源：
+「更新報價」按鈕比對兩個主要來源，逐檔使用日期較新的資料：
 
 1. Cloudflare Worker 即時抓取並快取市場資料。
 2. GitHub Actions 每日產生的 `market-data.json` 備援快照。
-3. 舊版瀏覽器直接查詢，僅作最後回退。
+兩個主要來源都不可用時，才使用舊版瀏覽器直接查詢作最後回退。
 
-台股收盤價使用證交所 OpenAPI、美股收盤價使用 Nasdaq、USD/TWD 使用公開匯率服務；配息由 GitHub 每日快照更新。所有配息仍依確認規則折減 20%，畫面會保留各市場實際交易日期。Worker 程式位於 `worker/`，每日排程位於 `.github/workflows/update-market-data.yml`。
+台股收盤價比較證交所 OpenAPI 與當月逐日報價，採用日期較新的有效收盤價；美股收盤價使用 Nasdaq、USD/TWD 使用公開匯率服務；配息由 GitHub 每日快照更新。所有配息仍依確認規則折減 20%，畫面會保留各市場實際交易日期。Worker 程式位於 `worker/`，每日排程位於 `.github/workflows/update-market-data.yml`。
 
 ## 本機預覽
 

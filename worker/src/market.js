@@ -6,7 +6,8 @@ export const MARKET_DEFINITIONS = {
     yahoo: "VOO", market: "US", frequency: 4,
     officialDividends: [
       { amount: 1.8724, date: Date.UTC(2026, 2, 27) },
-      { amount: 1.9622, date: Date.UTC(2026, 5, 26) }
+      { amount: 1.9622, date: Date.UTC(2026, 5, 26) },
+      { amount: 1.8226, date: Date.UTC(2026, 8, 28), announcedAt: Date.UTC(2026, 8, 28) }
     ],
     dividendSource: "Vanguard distributions, net 80%"
   },
@@ -28,7 +29,8 @@ export const MARKET_DEFINITIONS = {
     officialDividends: [
       { amount: 0.866, date: Date.UTC(2026, 0, 22) },
       { amount: 1, date: Date.UTC(2026, 3, 23) },
-      { amount: 1.35, date: Date.UTC(2026, 6, 21) }
+      { amount: 1.35, date: Date.UTC(2026, 6, 21) },
+      { amount: 1.72, date: Date.UTC(2026, 9, 22), announcedAt: Date.UTC(2026, 9, 1, 6, 30) }
     ],
     dividendSource: "TWSE distributions, net 80%"
   },
@@ -89,6 +91,7 @@ function selectedDividendEvents(definition, yahooDividends, now) {
   const currentYear = now.getUTCFullYear();
   const official = (definition.officialDividends || []).filter(
     (item) => new Date(Number(item.date)).getUTCFullYear() === currentYear
+      && (!item.announcedAt || item.announcedAt <= now.getTime())
   );
   return official.length ? official : yahooDividends;
 }
@@ -117,15 +120,51 @@ async function fetchYahoo(fetchImpl, yahooSymbol) {
   return parseYahooChart(await fetchJson(fetchImpl, url));
 }
 
-async function fetchTwse(fetchImpl) {
-  const rows = await fetchJson(fetchImpl, "https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL");
-  return Object.fromEntries(rows
-    .filter((row) => MARKET_DEFINITIONS[row.Code]?.market === "TW" && validNumber(row.ClosingPrice))
-    .map((row) => [row.Code, {
-      price: rounded(row.ClosingPrice),
-      date: rocDateToIso(row.Date),
-      source: "TWSE OpenAPI"
-    }]));
+function parseTwseMonthly(payload) {
+  const rows = payload?.data || [];
+  for (let index = rows.length - 1; index >= 0; index -= 1) {
+    const row = rows[index];
+    const date = rocDateToIso(String(row?.[0] || "").replaceAll("/", ""));
+    const price = Number(String(row?.[6] || "").replaceAll(",", ""));
+    if (date && validNumber(price) && price > 0) {
+      return { price: rounded(price), date, source: "TWSE STOCK_DAY" };
+    }
+  }
+  return null;
+}
+
+async function fetchTwse(fetchImpl, now) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Taipei", year: "numeric", month: "2-digit", day: "2-digit"
+  }).formatToParts(now);
+  const year = parts.find((part) => part.type === "year").value;
+  const month = parts.find((part) => part.type === "month").value;
+  const monthDate = `${year}${month}01`;
+  const symbols = Object.keys(MARKET_DEFINITIONS).filter((symbol) => MARKET_DEFINITIONS[symbol].market === "TW");
+  const [dailyResult, ...monthlyResults] = await Promise.allSettled([
+    fetchJson(fetchImpl, "https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL"),
+    ...symbols.map((symbol) => fetchJson(
+      fetchImpl,
+      `https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=${monthDate}&stockNo=${symbol}`
+    ))
+  ]);
+  const quotes = {};
+  if (dailyResult.status === "fulfilled" && Array.isArray(dailyResult.value)) {
+    dailyResult.value.forEach((row) => {
+      const date = rocDateToIso(row.Date);
+      const price = Number(String(row.ClosingPrice || "").replaceAll(",", ""));
+      if (MARKET_DEFINITIONS[row.Code]?.market === "TW" && date && validNumber(price) && price > 0) {
+        quotes[row.Code] = { price: rounded(price), date, source: "TWSE OpenAPI" };
+      }
+    });
+  }
+  symbols.forEach((symbol, index) => {
+    const result = monthlyResults[index];
+    const monthly = result.status === "fulfilled" ? parseTwseMonthly(result.value) : null;
+    if (monthly && (!quotes[symbol] || monthly.date > quotes[symbol].date)) quotes[symbol] = monthly;
+  });
+  if (!Object.keys(quotes).length) throw new Error("TWSE did not return any valid closing price");
+  return quotes;
 }
 
 export function parseNasdaqInfo(payload) {
@@ -186,7 +225,7 @@ function rejectionMessage(result, fallback) {
 
 export async function buildWorkerMarketSnapshot({ fetchImpl = fetch, now = new Date() } = {}) {
   const [twseResult, vooResult, nvdaResult, fxResult, baselineResult] = await Promise.allSettled([
-    fetchTwse(fetchImpl),
+    fetchTwse(fetchImpl, now),
     fetchNasdaq(fetchImpl, "VOO", "etf"),
     fetchNasdaq(fetchImpl, "NVDA", "stocks"),
     fetchOpenExchangeRate(fetchImpl),
@@ -257,7 +296,7 @@ export async function buildWorkerMarketSnapshot({ fetchImpl = fetch, now = new D
 export async function buildMarketSnapshot({ fetchImpl = fetch, now = new Date() } = {}) {
   const symbols = Object.keys(MARKET_DEFINITIONS);
   const [twseResult, vooResult, nvdaResult, fxOfficialResult, ...yahooResults] = await Promise.allSettled([
-    fetchTwse(fetchImpl),
+    fetchTwse(fetchImpl, now),
     fetchNasdaq(fetchImpl, "VOO", "etf"),
     fetchNasdaq(fetchImpl, "NVDA", "stocks"),
     fetchOpenExchangeRate(fetchImpl),

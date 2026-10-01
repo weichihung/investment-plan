@@ -2,15 +2,15 @@
   "use strict";
 
   const STORAGE_KEY = "investment-plan-settings-v2";
-  const DATA_VERSION = 30;
+  const DATA_VERSION = 31;
   const DIVIDEND_NET_FACTOR = 0.8;
   const SYMBOLS = ["VOO", "NVDA", "0050", "0056", "00919", "00631L"];
 
   // BEGIN WORKBOOK IMPORT
   const WORKBOOK_DATA = Object.freeze({
     "sourceFile": "投資試算表_2026-2048.xlsx",
-    "sourceModifiedAt": "2026-09-25T01:59:32",
-    "sourceSha256": "c92f194cda7437b705299b43e02fe01a5d4cc680cf62322bf10c0f932edd990b",
+    "sourceModifiedAt": "2026-10-01T08:01:42",
+    "sourceSha256": "3416d79a3bc139df1482b7facf793e02606306192ad9d210fb7394d8925fdbaa",
     "settings": {
       "startYear": 2026,
       "startAge": 43,
@@ -18,7 +18,7 @@
       "autoRollFirstYearMonths": true,
       "firstYearMonths": 3,
       "firstYearDataMonth": 10,
-      "fxRate": 31.825346,
+      "fxRate": 31.908932,
       "twPriceGrowth": 6,
       "usPriceGrowth": 6.5,
       "twDividendGrowth": 3,
@@ -30,9 +30,9 @@
       "fixedMonthly": 22000,
       "expenseInflation": 2.5,
       "annualSalaryMonths": 14,
-      "twdDeposit": 1309921,
-      "foreignDepositUsd": 11660.08475906,
-      "foreignDepositTwd": 371086.23184641,
+      "twdDeposit": 1304322,
+      "foreignDepositUsd": 11375.66932832,
+      "foreignDepositTwd": 362985.45905185,
       "bankMinimum": 650000,
       "carYear": 2030,
       "carPrice": 2000000,
@@ -46,49 +46,49 @@
       "homeLoanRate": 0,
       "homeLoanMonths": 0,
       "annualHomeCost": 0,
-      "updatedAt": "2026-09-25T10:02:32+08:00",
-      "quoteStatus": "附檔數值與最新收盤價、匯率及配息（配息已折減 20%）",
+      "updatedAt": "2026-10-01T18:41:16+08:00",
+      "quoteStatus": "附檔持股與計畫、最新可得收盤價及匯率（配息估算折減 20%）",
       "quoteDates": {
-        "TW": "2026-09-24",
-        "US": "2026-09-24",
-        "FX": "2026-09-25"
+        "TW": "2026-10-01",
+        "US": "2026-09-30",
+        "FX": "2026-10-01"
       }
     },
     "holdingSettings": {
       "VOO": {
-        "units": 18.15494,
-        "cost": 579.115,
-        "price": 706.99,
-        "annualDividend": 6.13536
+        "units": 18.29609,
+        "cost": 580.118,
+        "price": 700.86,
+        "annualDividend": 6.03434667
       },
       "NVDA": {
-        "units": 118.69705,
-        "cost": 153.37441,
-        "price": 224.58,
+        "units": 119.58589,
+        "cost": 153.908,
+        "price": 228.38,
         "annualDividend": 0.8
       },
       "0050": {
         "units": 41.585,
         "cost": 43.89,
-        "price": 112.4,
+        "price": 112.9,
         "annualDividend": 1.28
       },
       "0056": {
         "units": 32,
         "cost": 31.03,
-        "price": 56.65,
-        "annualDividend": 3.4304
+        "price": 56.85,
+        "annualDividend": 3.9488
       },
       "00919": {
         "units": 51,
         "cost": 23.48,
-        "price": 31.83,
+        "price": 31.63,
         "annualDividend": 3.072
       },
       "00631L": {
         "units": 0,
         "cost": 0,
-        "price": 38.87,
+        "price": 39.62,
         "annualDividend": 0
       }
     },
@@ -870,13 +870,35 @@
     const fallbackUrl = String(config.fallbackUrl || "https://raw.githubusercontent.com/weichihung/investment-plan/main/market-data.json");
     if (fallbackUrl) endpoints.push({ url: fallbackUrl, label: "GitHub 每日備援" });
 
-    for (const endpoint of endpoints) {
+    const results = await Promise.all(endpoints.map(async (endpoint) => {
       try {
         const snapshot = await fetchMarketJson(endpoint.url);
-        return applyMarketSnapshot(settings, snapshot, endpoint.label);
+        if (Number(snapshot?.schemaVersion) !== 1 || !snapshot.quotes) return null;
+        return { ...endpoint, snapshot };
       } catch (_error) {
-        // Continue to the next independent source.
+        return null;
       }
+    }));
+    const available = results.filter(Boolean);
+    if (available.length) {
+      const newest = (getRecord, isValid) => available
+        .map(({ snapshot }) => ({ record: getRecord(snapshot), generatedAt: snapshot.generatedAt || "" }))
+        .filter(({ record }) => record && isValid(record))
+        .sort((a, b) => String(b.record.date || "").localeCompare(String(a.record.date || ""))
+          || b.generatedAt.localeCompare(a.generatedAt))[0]?.record;
+      const quotes = Object.fromEntries(holdings.map((meta) => [meta.symbol, newest(
+        (snapshot) => snapshot.quotes[meta.symbol],
+        (quote) => validMarketNumber(quote.price) && Number(quote.price) > 0
+      )]).filter(([, quote]) => quote));
+      const fx = newest(
+        (snapshot) => snapshot.fx?.USD_TWD,
+        (record) => validMarketNumber(record.rate) && Number(record.rate) > 0
+      );
+      const generatedAt = available.map(({ snapshot }) => snapshot.generatedAt || "").sort().at(-1);
+      const label = available.length > 1 ? "即時服務與 GitHub 備援比對" : available[0].label;
+      return applyMarketSnapshot(settings, {
+        schemaVersion: 1, quotes, fx: { USD_TWD: fx }, generatedAt
+      }, label);
     }
     try {
       return await updateQuotesDirect(settings);

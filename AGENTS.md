@@ -40,7 +40,7 @@ Maintain a personal investment-planning system that provides:
 
 - Planning starts in 2026 at age 43 and currently runs through age 65 in 2048.
 - The imported workbook is the authority for numeric planning inputs, holdings, prices, net dividends, payout months and yearly manual investment plans.
-- The current workbook baseline has four remaining months in 2026 and is anchored to September; the count decreases automatically in later months.
+- The current workbook baseline has three remaining months in 2026 and is anchored to October; the count decreases automatically in later months.
 - Salary uses the workbook's remaining-month count in 2026 and 14 months annually from 2027, ending before age 65.
 - Current market assumptions are 6% Taiwan price growth, 6.5% US price growth, 3% Taiwan dividend growth and 5% US dividend growth.
 - Holding cost and quantity edits are persisted only when the user presses the save-holdings button.
@@ -74,8 +74,8 @@ When the user requests `更新報價` or asks to update holdings plus quotes:
 - Refresh USD/TWD using the latest available market rate.
 - Refresh or estimate gross annual dividends from the latest available distribution data, then apply the 80% net factor to every security.
 - Use NVDA's latest official quarterly run rate for its annual estimate before applying the 80% factor.
-- The website update button must try the configured Cloudflare Worker first, the published GitHub `market-data.json` snapshot second and direct browser retrieval only as a final legacy fallback.
-- The Worker uses TWSE OpenAPI for Taiwan closes, Nasdaq for US closes and ExchangeRate-API for USD/TWD. It carries dividend estimates from the scheduled GitHub snapshot, where distribution events are refreshed server-side.
+- The website update button must compare the configured Cloudflare Worker with the published GitHub `market-data.json` snapshot per quote date; use direct browser retrieval only if both primary sources fail.
+- The Worker compares TWSE OpenAPI with TWSE monthly daily closes and uses the newer Taiwan close; Nasdaq supplies US closes and ExchangeRate-API supplies USD/TWD. Dividend estimates come from the scheduled GitHub snapshot, where distribution events are refreshed server-side.
 - Keep the Worker response at schema version 1 and include the exact date and source for every quote and exchange rate.
 - The scheduled workflow `.github/workflows/update-market-data.yml` refreshes the shared backup snapshot after completed market sessions.
 - Update user-provided deposits, units and cost basis exactly as stated.
