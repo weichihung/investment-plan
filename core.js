@@ -2,15 +2,15 @@
   "use strict";
 
   const STORAGE_KEY = "investment-plan-settings-v2";
-  const DATA_VERSION = 31;
+  const DATA_VERSION = 32;
   const DIVIDEND_NET_FACTOR = 0.8;
   const SYMBOLS = ["VOO", "NVDA", "0050", "0056", "00919", "00631L"];
 
   // BEGIN WORKBOOK IMPORT
   const WORKBOOK_DATA = Object.freeze({
     "sourceFile": "投資試算表_2026-2048.xlsx",
-    "sourceModifiedAt": "2026-10-01T08:01:42",
-    "sourceSha256": "3416d79a3bc139df1482b7facf793e02606306192ad9d210fb7394d8925fdbaa",
+    "sourceModifiedAt": "2026-10-21T08:18:39",
+    "sourceSha256": "4736e012fbd3c38c04b48df999a1b3da80cb4515befb391c7cb2dd5606ab2f18",
     "settings": {
       "startYear": 2026,
       "startAge": 43,
@@ -18,7 +18,7 @@
       "autoRollFirstYearMonths": true,
       "firstYearMonths": 3,
       "firstYearDataMonth": 10,
-      "fxRate": 31.908932,
+      "fxRate": 32.411205,
       "twPriceGrowth": 6,
       "usPriceGrowth": 6.5,
       "twDividendGrowth": 3,
@@ -30,9 +30,9 @@
       "fixedMonthly": 22000,
       "expenseInflation": 2.5,
       "annualSalaryMonths": 14,
-      "twdDeposit": 1304322,
-      "foreignDepositUsd": 11375.66932832,
-      "foreignDepositTwd": 362985.45905185,
+      "twdDeposit": 1294539,
+      "foreignDepositUsd": 10904.74873213,
+      "foreignDepositTwd": 353436.04663056,
       "bankMinimum": 650000,
       "carYear": 2030,
       "carPrice": 2000000,
@@ -46,49 +46,49 @@
       "homeLoanRate": 0,
       "homeLoanMonths": 0,
       "annualHomeCost": 0,
-      "updatedAt": "2026-10-01T18:41:16+08:00",
+      "updatedAt": "2026-10-23T00:08:44.265Z",
       "quoteStatus": "附檔持股與計畫、最新可得收盤價及匯率（配息估算折減 20%）",
       "quoteDates": {
-        "TW": "2026-10-01",
-        "US": "2026-09-30",
-        "FX": "2026-10-01"
+        "TW": "2026-10-22",
+        "US": "2026-10-22",
+        "FX": "2026-10-22"
       }
     },
     "holdingSettings": {
       "VOO": {
-        "units": 18.29609,
-        "cost": 580.118,
-        "price": 700.86,
+        "units": 18.58015,
+        "cost": 582.019,
+        "price": 702.255,
         "annualDividend": 6.03434667
       },
       "NVDA": {
-        "units": 119.58589,
-        "cost": 153.908,
-        "price": 228.38,
+        "units": 120.9793,
+        "cost": 154.616,
+        "price": 212.21,
         "annualDividend": 0.8
       },
       "0050": {
-        "units": 41.585,
-        "cost": 43.89,
-        "price": 112.9,
+        "units": 42.285,
+        "cost": 45,
+        "price": 106.9,
         "annualDividend": 1.28
       },
       "0056": {
         "units": 32,
         "cost": 31.03,
-        "price": 56.85,
+        "price": 56.3,
         "annualDividend": 3.9488
       },
       "00919": {
         "units": 51,
         "cost": 23.48,
-        "price": 31.63,
+        "price": 32.42,
         "annualDividend": 3.072
       },
       "00631L": {
         "units": 0,
         "cost": 0,
-        "price": 39.62,
+        "price": 35.61,
         "annualDividend": 0
       }
     },
