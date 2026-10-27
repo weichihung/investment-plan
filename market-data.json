@@ -1,18 +1,18 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-24T00:58:37.750Z",
+  "generatedAt": "2026-10-27T01:35:33.156Z",
   "status": "complete",
   "quotes": {
     "VOO": {
-      "price": 698.58,
-      "date": "2026-10-23",
+      "price": 703.41,
+      "date": "2026-10-26",
       "annualDividend": 6.03434667,
       "priceSource": "Nasdaq",
       "dividendSource": "Vanguard distributions, net 80%"
     },
     "NVDA": {
-      "price": 210.96,
-      "date": "2026-10-23",
+      "price": 216,
+      "date": "2026-10-26",
       "annualDividend": 0.8,
       "priceSource": "Nasdaq",
       "dividendSource": "NVIDIA quarterly dividend run rate, net 80%"
@@ -48,8 +48,8 @@
   },
   "fx": {
     "USD_TWD": {
-      "rate": 32.587187,
-      "date": "2026-10-24",
+      "rate": 32.592411,
+      "date": "2026-10-27",
       "source": "ExchangeRate-API"
     }
   },
