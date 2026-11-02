@@ -3,19 +3,20 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#173b57">
+  <meta name="theme-color" content="#181C1D">
   <link rel="icon" href="data:,">
   <title>遠見資產｜行動版</title>
-  <link rel="stylesheet" href="styles.css?v=33">
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem("investment-theme")==="light"?"light":"dark"}catch(_error){document.documentElement.dataset.theme="dark"}</script>
+  <link rel="stylesheet" href="styles.css?v=34">
 </head>
 <body class="mobile-app">
   <header class="mobile-header">
-    <div><p>PERSONAL WEALTH</p><h1 id="pageTitle">逐年財務總表</h1></div>
-    <button class="quote-button" id="updateQuotes"><span>更新</span></button>
+    <div class="mobile-brand"><span class="brand-mark">遠</span><div><p>INVESTMENT INTELLIGENCE</p><h1 id="pageTitle">逐年財務總表</h1></div></div>
+    <div class="mobile-actions"><button class="theme-toggle" data-theme-toggle type="button" aria-label="切換淺色模式" aria-pressed="false"><span aria-hidden="true">◐</span></button><button class="quote-button" id="updateQuotes">更新報價</button></div>
   </header>
   <div class="mobile-market"><span id="fxBadge">USD/TWD —</span><small id="quoteMeta">—</small></div>
   <nav class="mobile-tabs" aria-label="全部功能">
-    <button class="active" data-page="overview">總表</button>
+    <button class="active" data-page="overview">總覽</button>
     <button data-page="freedom">財務自由</button>
     <button data-page="portfolio">持股</button>
     <button data-page="plan">投資</button>
@@ -38,7 +39,7 @@
   <script src="d3.min.js?v=20"></script>
   <script src="market-config.js?v=33"></script>
   <script src="core.js?v=33&build=2"></script>
-  <script src="charts.js?v=20"></script>
-  <script src="app.js?v=33"></script>
+  <script src="charts.js?v=34"></script>
+  <script src="app.js?v=34"></script>
 </body>
 </html>

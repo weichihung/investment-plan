@@ -3,37 +3,32 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#173b57">
+  <meta name="theme-color" content="#181C1D">
   <link rel="icon" href="data:,">
   <title>遠見資產｜投資規劃系統</title>
-  <link rel="stylesheet" href="styles.css?v=33">
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem("investment-theme")==="light"?"light":"dark"}catch(_error){document.documentElement.dataset.theme="dark"}</script>
+  <link rel="stylesheet" href="styles.css?v=34">
 </head>
 <body class="desktop-app">
-  <aside class="sidebar">
-    <a class="brand" href="#" data-page="overview"><span>遠見</span><strong>資產規劃</strong><small>2026—2048</small></a>
-    <nav class="page-nav" aria-label="主要功能">
-      <button class="active" data-page="overview"><i>總</i><span>逐年總表</span></button>
-      <button data-page="freedom"><i>自</i><span>財務自由檢視</span></button>
-      <button data-page="settings"><i>設</i><span>設定</span></button>
-      <button data-page="portfolio"><i>持</i><span>持股現況</span></button>
-      <button data-page="plan"><i>投</i><span>投資計畫</span></button>
-      <button data-page="market"><i>價</i><span>價格與配息</span></button>
-      <button data-page="holdings"><i>估</i><span>持股推估</span></button>
-      <button data-page="dividends"><i>月</i><span>月配息</span></button>
-    </nav>
-    <div class="sidebar-foot">
-      <span>規劃期間</span><strong>43 歲至 65 歲</strong><small>所有頁面共用同一套設定</small>
-    </div>
-  </aside>
-
   <div class="app-frame">
     <header class="topbar">
-      <div><p class="eyebrow">PERSONAL WEALTH SYSTEM</p><h1 id="pageTitle">逐年財務總表</h1></div>
+      <a class="brand" href="#" data-page="overview"><span class="brand-mark">遠</span><span><strong>遠見資產</strong><small>INVESTMENT INTELLIGENCE</small></span></a>
+      <nav class="page-nav" aria-label="主要功能">
+        <button class="active" data-page="overview">總覽</button>
+        <button data-page="freedom">財務自由</button>
+        <button data-page="portfolio">持股</button>
+        <button data-page="plan">投資計畫</button>
+        <button data-page="market">價格配息</button>
+        <button data-page="holdings">持股推估</button>
+        <button data-page="dividends">月配息</button>
+        <button data-page="settings">設定</button>
+      </nav>
       <div class="top-actions">
-        <div class="market-meta"><span id="fxBadge">USD/TWD —</span><small id="quoteMeta">—</small></div>
+        <button class="theme-toggle" data-theme-toggle type="button" aria-label="切換淺色模式" aria-pressed="false"><span aria-hidden="true">◐</span><span data-theme-label>淺色</span></button>
         <button class="button primary" id="updateQuotes">更新報價</button>
       </div>
     </header>
+    <div class="market-strip"><div><span id="fxBadge">USD/TWD —</span><small id="quoteMeta">—</small></div><strong id="pageTitle">逐年財務總表</strong></div>
     <main id="appPages" tabindex="-1"></main>
   </div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -41,7 +36,7 @@
   <script src="d3.min.js?v=20"></script>
   <script src="market-config.js?v=33"></script>
   <script src="core.js?v=33&build=2"></script>
-  <script src="charts.js?v=20"></script>
-  <script src="app.js?v=33"></script>
+  <script src="charts.js?v=34"></script>
+  <script src="app.js?v=34"></script>
 </body>
 </html>

@@ -43,14 +43,27 @@
   function pageMarkup() {
     return `
       <section class="page active" data-page-panel="overview">
-        <div class="page-heading"><div><p class="eyebrow">YEARLY MASTER PLAN</p><h2>逐年財務試算總表</h2><p>從 2026 年 43 歲到 2048 年 65 歲，整合收入、支出、持股與資產。</p></div><select class="year-select" id="overviewYearSelect" aria-label="選擇年度"></select></div>
+        <div class="executive-hero">
+          <div class="hero-intro"><p class="eyebrow">EXECUTIVE INVESTMENT DASHBOARD</p><h2>遠見資產<br>投資規劃系統</h2><p>從現在到 65 歲，掌握資產、現金流與投資配置的每一步。</p><span class="hero-range" id="planningRange">—</span></div>
+          <div class="hero-modules"><div class="module-heading"><div><span class="kicker">EXPLORE</span><h3>分析模組</h3></div><p>選擇想檢視的主題，所有資料會隨設定連動。</p></div><div class="module-grid">
+            <button class="module-tile tone-gold" data-page="overview"><span>01</span><strong>年度總覽</strong><small>資產與現金流</small></button>
+            <button class="module-tile tone-teal" data-page="freedom"><span>02</span><strong>財務自由</strong><small>目標與覆蓋率</small></button>
+            <button class="module-tile tone-blue" data-page="portfolio"><span>03</span><strong>持股現況</strong><small>市值與損益</small></button>
+            <button class="module-tile tone-amber" data-page="plan"><span>04</span><strong>投資計畫</strong><small>年度投入配置</small></button>
+            <button class="module-tile tone-teal" data-page="market"><span>05</span><strong>價格配息</strong><small>報價與股利</small></button>
+            <button class="module-tile tone-blue" data-page="holdings"><span>06</span><strong>持股推估</strong><small>逐年部位</small></button>
+            <button class="module-tile tone-amber" data-page="dividends"><span>07</span><strong>月配息</strong><small>收入時點</small></button>
+            <button class="module-tile tone-gold" data-page="settings"><span>08</span><strong>參數設定</strong><small>即時試算</small></button>
+          </div></div>
+        </div>
+        <div class="page-heading"><div><p class="eyebrow">YEARLY MASTER PLAN</p><h2>逐年財務總覽</h2><p>收入、支出、持股與資產，集中在同一個決策畫面。</p></div><select class="year-select" id="overviewYearSelect" aria-label="選擇年度"></select></div>
         <div class="hero-grid">
           <article class="hero-card"><span>目前總資產</span><strong id="currentTotal">—</strong><small id="currentProfit">—</small></article>
           <article class="metric-card"><span>銀行存款</span><strong id="currentCash">—</strong><small id="cashSafety">—</small></article>
           <article class="metric-card"><span>股票市值</span><strong id="currentStocks">—</strong><small id="stockSplit">—</small></article>
           <article class="metric-card"><span>目前預估年股利</span><strong id="currentDividend">—</strong><small>最新配息資料年化後折減 20%</small></article>
         </div>
-        <article class="panel chart-panel"><div class="panel-head"><div><span class="kicker">ASSET TRAJECTORY</span><h3>資產成長軌跡</h3></div><div class="panel-pills"><span>期末 <b id="finalAsset">—</b></span><span>累計成長 <b id="totalGrowth">—</b></span></div></div><div class="chart-box wide" id="assetTrendChart"></div><p class="chart-note">點選圖上的年份，可同步切換各年度明細。</p></article>
+        <div class="overview-visuals"><article class="panel chart-panel"><div class="panel-head"><div><span class="kicker">ASSET TRAJECTORY</span><h3>資產成長軌跡</h3></div><div class="panel-pills"><span>期末 <b id="finalAsset">—</b></span><span>累計成長 <b id="totalGrowth">—</b></span></div></div><div class="chart-box wide" id="assetTrendChart"></div><p class="chart-note">三組長條分別顯示總資產、股票市值與銀行存款；柱頂標示總資產與年增率，點選年份查看明細。</p></article><article class="panel ranking-panel"><div class="panel-head"><div><span class="kicker">PORTFOLIO RANKING</span><h3>持股市值排行</h3></div></div><p class="ranking-intro">依目前市值排序，快速看出集中部位。</p><div class="ranking-list" id="overviewRanking"></div></article></div>
         <div class="two-column overview-detail">
           <article class="panel"><div class="panel-head"><div><span class="kicker">SELECTED YEAR</span><h3 id="selectedYearTitle">年度摘要</h3></div><span class="age-chip" id="selectedAge">—</span></div><div class="summary-grid" id="yearSummary"></div><div class="detail-grid" id="yearDetail"></div></article>
           <article class="panel"><div class="panel-head"><div><span class="kicker">PLANNING NOTES</span><h3>規劃提醒</h3></div></div><div class="notice-list" id="planningNotes"></div></article>
@@ -71,7 +84,7 @@
       </section>
 
       <section class="page" data-page-panel="settings">
-        <div class="page-heading"><div><p class="eyebrow">SCENARIO SETTINGS</p><h2>投資試算參數設定</h2><p>黃底欄位皆可調整，變更後所有分頁會立即連動並儲存在目前瀏覽器。</p></div><button class="button ghost" id="resetSettings">還原附檔預設</button></div>
+        <div class="page-heading"><div><p class="eyebrow">SCENARIO SETTINGS</p><h2>投資試算參數設定</h2><p>可編輯欄位調整後，所有分頁會立即連動並儲存在目前瀏覽器。</p></div><button class="button ghost" id="resetSettings">還原附檔預設</button></div>
         <form id="settingsForm" class="settings-layout">
           <fieldset class="setting-card"><legend><b>一</b>期間與年齡</legend><div class="field-grid">
             <label>起始年度<input name="startYear" type="number" min="2026" max="2048"></label><label>起始年齡<input name="startAge" type="number" min="18" max="80"></label><label>試算到幾歲<input name="endAge" type="number" min="18" max="100"></label><label>首年計入月數<input name="firstYearMonths" type="number" min="0" max="12"></label>
@@ -159,6 +172,7 @@
     const { summary, forecast } = calculated;
     const row = selectedRow();
     const final = forecast[forecast.length - 1];
+    $("#planningRange").textContent = `${forecast[0].year}—${final.year} · ${forecast[0].age} 至 ${final.age} 歲`;
     $("#currentTotal").textContent = money(summary.total);
     $("#currentProfit").textContent = `目前投資損益 ${signedMoney(summary.profit)}`;
     $("#currentCash").textContent = money(summary.cash);
@@ -168,6 +182,9 @@
     $("#currentDividend").textContent = money(summary.dividends);
     $("#finalAsset").textContent = money(final.total);
     $("#totalGrowth").textContent = percent(final.total / summary.total - 1, 0);
+    const ranked = calculated.portfolio.filter(hasHolding).sort((a, b) => b.marketValueTwd - a.marketValueTwd);
+    const largest = ranked[0]?.marketValueTwd || 1;
+    $("#overviewRanking").innerHTML = ranked.map((item, index) => `<div class="ranking-row"><div class="ranking-label"><span>${String(index + 1).padStart(2, "0")}</span><strong>${item.symbol}</strong><small>${percent(item.weight)}</small></div><div class="ranking-track"><i class="rank-tone-${index % 4 + 1}" style="width:${item.marketValueTwd / largest * 100}%"></i></div><b>${compactMoney(item.marketValueTwd)}</b></div>`).join("");
     $("#selectedYearTitle").textContent = `${row.year} 年度摘要`;
     $("#selectedAge").textContent = `${row.age} 歲`;
     $("#yearSummary").innerHTML = [
@@ -342,6 +359,32 @@
     requestAnimationFrame(renderActiveChart);
   }
 
+  function makeTablesCollapsible() {
+    $$(".panel > .table-scroll").forEach((table) => {
+      const details = document.createElement("details");
+      details.className = "audit-details";
+      const summary = document.createElement("summary");
+      const editable = Boolean($("#portfolioRows", table));
+      summary.innerHTML = `<span>${editable ? "展開持股明細並編輯" : "展開完整資料表"}</span><small>${editable ? "修改後請按保存持股設定" : "可橫向捲動查核數值"}</small><i aria-hidden="true">⌄</i>`;
+      table.before(details);
+      details.append(summary, table);
+    });
+  }
+
+  function applyTheme(theme) {
+    const light = theme === "light";
+    document.documentElement.dataset.theme = light ? "light" : "dark";
+    $$("[data-theme-toggle]").forEach((button) => {
+      button.setAttribute("aria-label", `切換${light ? "深色" : "淺色"}模式`);
+      button.setAttribute("aria-pressed", String(light));
+      const label = $("[data-theme-label]", button);
+      if (label) label.textContent = light ? "深色" : "淺色";
+    });
+    const meta = $('meta[name="theme-color"]');
+    if (meta) meta.content = light ? "#F5F1EB" : "#181C1D";
+    if (calculated) requestAnimationFrame(renderActiveChart);
+  }
+
   function toast(message) {
     const node = $("#toast");
     node.textContent = message;
@@ -352,6 +395,12 @@
 
   function bind() {
     document.addEventListener("click", (event) => {
+      if (event.target.closest("[data-theme-toggle]")) {
+        const next = document.documentElement.dataset.theme === "light" ? "dark" : "light";
+        try { localStorage.setItem("investment-theme", next); } catch (_error) { /* Browser storage may be unavailable. */ }
+        applyTheme(next);
+        return;
+      }
       const pageButton = event.target.closest("[data-page]");
       if (pageButton) {
         event.preventDefault();
@@ -461,6 +510,8 @@
   }
 
   $("#appPages").innerHTML = pageMarkup();
+  makeTablesCollapsible();
+  applyTheme(document.documentElement.dataset.theme);
   bind();
   renderAll();
   showPage("overview", false);

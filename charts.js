@@ -2,24 +2,24 @@
   "use strict";
 
   const colours = {
-    navy: "#173B57",
-    blue: "#2E6E9E",
-    teal: "#1C8C7D",
-    mint: "#73C7AD",
-    gold: "#D6A348",
-    coral: "#D46A5E",
-    violet: "#7768AE",
-    ink: "#1B2D3B",
-    muted: "#70818E",
-    grid: "#DDE6EB"
+    navy: "var(--chart-1)",
+    blue: "var(--chart-3)",
+    teal: "var(--chart-2)",
+    mint: "var(--chart-2)",
+    gold: "var(--chart-4)",
+    coral: "var(--negative)",
+    violet: "var(--chart-3)",
+    ink: "var(--text)",
+    muted: "var(--muted)",
+    grid: "var(--line)"
   };
   const securityColours = {
-    VOO: "#2E6E9E",
-    NVDA: "#7768AE",
-    "0050": "#173B57",
-    "0056": "#1C8C7D",
-    "00919": "#73C7AD",
-    "00631L": "#D6A348"
+    VOO: "var(--chart-3)",
+    NVDA: "var(--chart-4)",
+    "0050": "var(--chart-1)",
+    "0056": "var(--chart-2)",
+    "00919": "var(--chart-3)",
+    "00631L": "var(--chart-4)"
   };
 
   function ready(container) {
@@ -42,11 +42,11 @@
     return global.d3.select(node);
   }
 
-  function frame(container, ariaLabel, height = 340) {
+  function frame(container, ariaLabel, height = 340, minWidth = 720) {
     const element = ready(container);
     if (!element) return null;
     element.innerHTML = "";
-    const width = Math.max(720, element.clientWidth || 720);
+    const width = Math.max(minWidth, element.clientWidth || minWidth);
     const svg = global.d3.select(element).append("svg")
       .attr("viewBox", `0 0 ${width} ${height}`)
       .attr("preserveAspectRatio", "xMidYMid meet")
@@ -58,7 +58,7 @@
 
   function moneyAxis(value) {
     const amount = Number(value) || 0;
-    if (Math.abs(amount) >= 1000000) return `${(amount / 1000000).toFixed(amount >= 10000000 ? 0 : 1)}M`;
+    if (Math.abs(amount) >= 1000000) return `${(amount / 1000000).toFixed(2).replace(/\.?0+$/, "")}M`;
     if (Math.abs(amount) >= 1000) return `${Math.round(amount / 1000)}K`;
     return String(Math.round(amount));
   }
@@ -75,54 +75,56 @@
   }
 
   function assetTrend(container, rows, selectedYear, onSelect) {
-    const chart = frame(container, "2026 至 2048 年總資產、股票市值與銀行存款趨勢", 380);
+    const chart = frame(container, "逐年總資產、股票市值與銀行存款長條圖", 430, 1200);
     if (!chart || !rows.length) return;
     const { svg, width, height } = chart;
-    const margin = { top: 28, right: 30, bottom: 56, left: 72 };
+    const margin = { top: 54, right: 20, bottom: 75, left: 62 };
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
     const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
-    const x = global.d3.scalePoint().domain(rows.map((row) => row.year)).range([0, innerWidth]).padding(0.35);
-    const y = global.d3.scaleLinear().domain([0, global.d3.max(rows, (row) => row.total) * 1.08]).nice().range([innerHeight, 0]);
-    const tickYears = rows.filter((_row, index) => index % 2 === 0 || index === rows.length - 1).map((row) => row.year);
+    const x = global.d3.scaleBand().domain(rows.map((row) => row.year)).range([0, innerWidth]).padding(0.22);
+    const seriesX = global.d3.scaleBand().domain(["total", "stockValue", "cash"]).range([0, x.bandwidth()]).padding(0.08);
+    const minimum = Math.min(0, global.d3.min(rows, (row) => row.cash) || 0);
+    const y = global.d3.scaleLinear().domain([minimum, global.d3.max(rows, (row) => row.total) * 1.15]).nice().range([innerHeight, 0]);
+    const series = [
+      { key: "total", colour: colours.navy, label: "總資產" },
+      { key: "stockValue", colour: colours.teal, label: "股票市值" },
+      { key: "cash", colour: colours.blue, label: "銀行存款" }
+    ];
 
     g.append("g").attr("class", "chart-grid").call(global.d3.axisLeft(y).ticks(5).tickSize(-innerWidth).tickFormat(""));
     g.append("g").attr("class", "chart-axis").attr("transform", `translate(0,${innerHeight})`)
-      .call(global.d3.axisBottom(x).tickValues(tickYears).tickFormat((year) => `${year}`));
+      .call(global.d3.axisBottom(x).tickSize(0).tickFormat((year) => String(year)));
     g.append("g").attr("class", "chart-axis").call(global.d3.axisLeft(y).ticks(5).tickFormat(moneyAxis));
-
-    const area = global.d3.area().x((row) => x(row.year)).y0(innerHeight).y1((row) => y(row.total)).curve(global.d3.curveMonotoneX);
-    const gradient = svg.append("defs").append("linearGradient").attr("id", "asset-area-gradient").attr("x1", "0").attr("y1", "0").attr("x2", "0").attr("y2", "1");
-    gradient.append("stop").attr("offset", "0%").attr("stop-color", colours.teal).attr("stop-opacity", 0.32);
-    gradient.append("stop").attr("offset", "100%").attr("stop-color", colours.teal).attr("stop-opacity", 0.02);
-    g.append("path").datum(rows).attr("d", area).attr("fill", "url(#asset-area-gradient)");
-
-    [
-      { key: "total", colour: colours.navy, width: 3.5, label: "總資產" },
-      { key: "stockValue", colour: colours.teal, width: 2, label: "股票市值" },
-      { key: "cash", colour: colours.gold, width: 2, label: "銀行存款" }
-    ].forEach((series) => {
-      const line = global.d3.line().x((row) => x(row.year)).y((row) => y(row[series.key])).curve(global.d3.curveMonotoneX);
-      g.append("path").datum(rows).attr("class", "chart-line").attr("d", line).attr("stroke", series.colour).attr("stroke-width", series.width);
-    });
-
-    const dots = g.selectAll(".asset-dot").data(rows).join("circle")
-      .attr("class", "asset-dot")
-      .attr("cx", (row) => x(row.year)).attr("cy", (row) => y(row.total))
-      .attr("r", (row) => row.year === selectedYear ? 7 : 4)
-      .attr("fill", (row) => row.year === selectedYear ? colours.gold : colours.navy)
-      .attr("tabindex", 0)
-      .on("mousemove", (event, row) => showTooltip(event, `<strong>${row.year} 年 · ${row.age} 歲</strong><span>總資產 ${moneyAxis(row.total)}</span><span>年增 ${(row.growthRate * 100).toFixed(1)}%</span><span>銀行存款 ${moneyAxis(row.cash)}</span>`))
-      .on("mouseout", hideTooltip)
-      .on("click", (_event, row) => onSelect(row.year))
+    const yearGroups = g.selectAll(".asset-year").data(rows).join("g")
+      .attr("class", (row) => `asset-year${row.year === selectedYear ? " selected" : ""}`)
+      .attr("transform", (row) => `translate(${x(row.year)},0)`)
+      .attr("tabindex", 0).attr("role", "button")
+      .attr("aria-label", (row) => `${row.year} 年，${row.age} 歲，總資產 ${Math.round(row.total)} 元，年增 ${(row.growthRate * 100).toFixed(1)}%`)
+      .on("mousemove", (event, row) => showTooltip(event, `<strong>${row.year} 年 · ${row.age} 歲</strong><span>總資產 ${moneyAxis(row.total)}</span><span>年增 ${(row.growthRate * 100).toFixed(1)}%</span><span>股票市值 ${moneyAxis(row.stockValue)}</span><span>銀行存款 ${moneyAxis(row.cash)}</span>`))
+      .on("mouseout", hideTooltip).on("click", (_event, row) => onSelect(row.year))
       .on("keydown", (event, row) => { if (event.key === "Enter" || event.key === " ") onSelect(row.year); });
-    dots.append("title").text((row) => `${row.year} 年，${row.age} 歲，總資產 ${Math.round(row.total)} 元`);
+    series.forEach((item) => yearGroups.append("rect")
+      .attr("x", seriesX(item.key)).attr("width", seriesX.bandwidth())
+      .attr("y", (row) => y(Math.max(0, row[item.key])))
+      .attr("height", (row) => Math.abs(y(row[item.key]) - y(0)))
+      .attr("fill", item.colour).attr("rx", 2));
+    yearGroups.append("text").attr("class", "asset-value-label")
+      .attr("x", seriesX("total") + seriesX.bandwidth() / 2).attr("y", (row) => y(row.total) - 21)
+      .attr("text-anchor", "middle")
+      .each(function (row) {
+        const label = global.d3.select(this);
+        label.append("tspan").attr("x", seriesX("total") + seriesX.bandwidth() / 2).text(moneyAxis(row.total));
+        label.append("tspan").attr("x", seriesX("total") + seriesX.bandwidth() / 2).attr("dy", 11).attr("class", "asset-growth-label").text(`${row.growthRate >= 0 ? "+" : ""}${(row.growthRate * 100).toFixed(1)}%`);
+      });
+    yearGroups.append("text").attr("class", "asset-age-label").attr("x", x.bandwidth() / 2)
+      .attr("y", innerHeight + 29).attr("text-anchor", "middle").text((row) => `${row.age} 歲`);
 
     const legend = svg.append("g").attr("class", "chart-legend-svg").attr("transform", `translate(${margin.left},${height - 12})`);
-    [{ label: "總資產", colour: colours.navy }, { label: "股票市值", colour: colours.teal }, { label: "銀行存款", colour: colours.gold }]
+    series
       .forEach((item, index) => {
-        const group = legend.append("g").attr("transform", `translate(${index * 118},0)`);
-        group.append("line").attr("x2", 22).attr("stroke", item.colour).attr("stroke-width", 4).attr("stroke-linecap", "round");
+        const group = legend.append("g").attr("transform", `translate(${index * 126},0)`);
+        group.append("rect").attr("width", 14).attr("height", 10).attr("y", -8).attr("rx", 2).attr("fill", item.colour);
         group.append("text").attr("x", 30).attr("y", 4).text(item.label);
       });
   }
