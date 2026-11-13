@@ -1,46 +1,46 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-12T03:17:21.783Z",
-  "status": "complete",
+  "generatedAt": "2026-11-13T02:51:19.899Z",
+  "status": "partial",
   "quotes": {
     "VOO": {
-      "price": 698.39,
-      "date": "2026-11-11",
+      "price": 696.08,
+      "date": "2026-11-12",
       "annualDividend": 6.03434667,
       "priceSource": "Nasdaq",
       "dividendSource": "Vanguard distributions, net 80%"
     },
     "NVDA": {
-      "price": 173.73,
-      "date": "2026-11-11",
+      "price": 166.19,
+      "date": "2026-11-12",
       "annualDividend": 0.8,
       "priceSource": "Nasdaq",
       "dividendSource": "NVIDIA quarterly dividend run rate, net 80%"
     },
     "0050": {
-      "price": 103.2,
-      "date": "2026-11-11",
+      "price": 100.95,
+      "date": "2026-11-12",
       "annualDividend": 1.28,
       "priceSource": "TWSE OpenAPI",
       "dividendSource": "TWSE distributions, net 80%"
     },
     "0056": {
-      "price": 53.15,
-      "date": "2026-11-11",
+      "price": 52.35,
+      "date": "2026-11-12",
       "annualDividend": 3.9488,
       "priceSource": "TWSE OpenAPI",
       "dividendSource": "TWSE distributions, net 80%"
     },
     "00919": {
-      "price": 31.22,
-      "date": "2026-11-11",
+      "price": 30.95,
+      "date": "2026-11-12",
       "annualDividend": 3.072,
       "priceSource": "TWSE OpenAPI",
       "dividendSource": "Capital Investment Trust announcement, net 80%"
     },
     "00631L": {
-      "price": 32.53,
-      "date": "2026-11-11",
+      "price": 30.99,
+      "date": "2026-11-12",
       "annualDividend": 0,
       "priceSource": "TWSE OpenAPI",
       "dividendSource": "No distribution"
@@ -48,10 +48,17 @@
   },
   "fx": {
     "USD_TWD": {
-      "rate": 32.880042,
-      "date": "2026-11-12",
+      "rate": 32.976133,
+      "date": "2026-11-13",
       "source": "ExchangeRate-API"
     }
   },
-  "failures": []
+  "failures": [
+    "VOO: https://query1.finance.yahoo.com/v8/finance/chart/VOO?range=1y&interval=1d&events=div returned 429",
+    "NVDA: https://query1.finance.yahoo.com/v8/finance/chart/NVDA?range=1y&interval=1d&events=div returned 429",
+    "0050: https://query1.finance.yahoo.com/v8/finance/chart/0050.TW?range=1y&interval=1d&events=div returned 429",
+    "0056: https://query1.finance.yahoo.com/v8/finance/chart/0056.TW?range=1y&interval=1d&events=div returned 429",
+    "00919: https://query1.finance.yahoo.com/v8/finance/chart/00919.TW?range=1y&interval=1d&events=div returned 429",
+    "00631L: https://query1.finance.yahoo.com/v8/finance/chart/00631L.TW?range=1y&interval=1d&events=div returned 429"
+  ]
 }
