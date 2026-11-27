@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-26T04:17:52.505Z",
+  "generatedAt": "2026-11-27T04:27:17.433Z",
   "status": "complete",
   "quotes": {
     "VOO": {
@@ -18,29 +18,29 @@
       "dividendSource": "NVIDIA quarterly dividend run rate, net 80%"
     },
     "0050": {
-      "price": 90.3,
-      "date": "2026-11-25",
+      "price": 92.85,
+      "date": "2026-11-26",
       "annualDividend": 1.28,
       "priceSource": "TWSE OpenAPI",
       "dividendSource": "TWSE distributions, net 80%"
     },
     "0056": {
-      "price": 45.66,
-      "date": "2026-11-25",
+      "price": 47.49,
+      "date": "2026-11-26",
       "annualDividend": 3.9488,
       "priceSource": "TWSE OpenAPI",
       "dividendSource": "TWSE distributions, net 80%"
     },
     "00919": {
-      "price": 27.87,
-      "date": "2026-11-25",
+      "price": 28.82,
+      "date": "2026-11-26",
       "annualDividend": 3.072,
       "priceSource": "TWSE OpenAPI",
       "dividendSource": "Capital Investment Trust announcement, net 80%"
     },
     "00631L": {
-      "price": 23.78,
-      "date": "2026-11-25",
+      "price": 25.5,
+      "date": "2026-11-26",
       "annualDividend": 0,
       "priceSource": "TWSE OpenAPI",
       "dividendSource": "No distribution"
@@ -48,8 +48,8 @@
   },
   "fx": {
     "USD_TWD": {
-      "rate": 32.918193,
-      "date": "2026-11-25",
+      "rate": 32.948403,
+      "date": "2026-11-27",
       "source": "ExchangeRate-API"
     }
   },
