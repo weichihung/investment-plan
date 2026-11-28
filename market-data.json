@@ -1,46 +1,46 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-27T04:27:17.433Z",
+  "generatedAt": "2026-11-28T04:09:17.604Z",
   "status": "complete",
   "quotes": {
     "VOO": {
-      "price": 658.87,
-      "date": "2026-11-25",
+      "price": 670.04,
+      "date": "2026-11-27",
       "annualDividend": 6.03434667,
       "priceSource": "Nasdaq",
       "dividendSource": "Vanguard distributions, net 80%"
     },
     "NVDA": {
-      "price": 149.3,
-      "date": "2026-11-25",
+      "price": 150.49,
+      "date": "2026-11-27",
       "annualDividend": 0.8,
       "priceSource": "Nasdaq",
       "dividendSource": "NVIDIA quarterly dividend run rate, net 80%"
     },
     "0050": {
-      "price": 92.85,
-      "date": "2026-11-26",
+      "price": 92.4,
+      "date": "2026-11-27",
       "annualDividend": 1.28,
       "priceSource": "TWSE OpenAPI",
       "dividendSource": "TWSE distributions, net 80%"
     },
     "0056": {
-      "price": 47.49,
-      "date": "2026-11-26",
+      "price": 46.97,
+      "date": "2026-11-27",
       "annualDividend": 3.9488,
       "priceSource": "TWSE OpenAPI",
       "dividendSource": "TWSE distributions, net 80%"
     },
     "00919": {
-      "price": 28.82,
-      "date": "2026-11-26",
+      "price": 28.72,
+      "date": "2026-11-27",
       "annualDividend": 3.072,
       "priceSource": "TWSE OpenAPI",
       "dividendSource": "Capital Investment Trust announcement, net 80%"
     },
     "00631L": {
-      "price": 25.5,
-      "date": "2026-11-26",
+      "price": 25.4,
+      "date": "2026-11-27",
       "annualDividend": 0,
       "priceSource": "TWSE OpenAPI",
       "dividendSource": "No distribution"
@@ -48,8 +48,8 @@
   },
   "fx": {
     "USD_TWD": {
-      "rate": 32.948403,
-      "date": "2026-11-27",
+      "rate": 32.97857,
+      "date": "2026-11-28",
       "source": "ExchangeRate-API"
     }
   },
